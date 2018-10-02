@@ -1,0 +1,12 @@
+{
+  "name": "puppeteer-chromium-resolver",
+  "version": "1.0.0",
+  "description": "puppeteer-chromium-resolver",
+  "main": "index.js",
+  "dependencies": {
+    "puppeteer-core": "^1.8.0"
+  },
+  "scripts": {
+    "install": "node install.js"
+  }
+}
