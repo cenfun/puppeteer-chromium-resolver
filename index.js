@@ -4,8 +4,6 @@ const fs = require('fs');
 const os = require('os');
 const puppeteer = require('puppeteer-core');
 
-const revision = getRevision();
-
 class Resolver extends EventEmitter {
     constructor(option) {
         super();
@@ -15,10 +13,9 @@ class Resolver extends EventEmitter {
     defaultOption() {
         return {
             hosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
-            revision: revision,
+            revision: this.getRevision(),
             savePath: this.findSuitableTempDirectory(),
-            retry: 3,
-            timeout: 10000
+            retry: 3
         };
     }
 
@@ -32,7 +29,7 @@ class Resolver extends EventEmitter {
             path: this.savePath
         });
 
-        this.revisionInfo = browserFetcher.revisionInfo(revision);
+        this.revisionInfo = browserFetcher.revisionInfo(this.option.revision);
 
         console.log("Current chromium revision info:");
         for (let k in this.revisionInfo) {
@@ -80,7 +77,7 @@ class Resolver extends EventEmitter {
                 self.finishHandler();
             })
             .catch((error) => {
-                console.error(`ERROR: Failed to download Chromium r${revision}. retry ...`);
+                console.error(`ERROR: Failed to download Chromium r${this.option.revision}. retry ...`);
                 console.error(error);
                 self.next();
             });
@@ -149,6 +146,22 @@ class Resolver extends EventEmitter {
         process.exit(1);
     }
 
+    getRevision() {
+
+        var p1 = path.resolve(__dirname, "../puppeteer-core/package.json");
+        if (fs.existsSync(p1)) {
+            return require(p1).puppeteer.chromium_revision;
+        }
+
+        var p2 = path.resolve(__dirname, "./node_modules/puppeteer-core/package.json");
+        if (fs.existsSync(p2)) {
+            return require(p2).puppeteer.chromium_revision;
+        }
+
+        return require("./package.json").puppeteer.chromium_revision;
+
+    }
+
 
 }
 
@@ -159,7 +172,7 @@ let lastDownloadedBytes = 0;
 function onProgress(downloadedBytes, totalBytes) {
     if (!progressBar) {
         const ProgressBar = require('progress');
-        progressBar = new ProgressBar(`Downloading Chromium r${revision} - ${toMegabytes(totalBytes)} [:bar] :percent :etas `, {
+        progressBar = new ProgressBar(`Downloading Chromium - ${toMegabytes(totalBytes)} [:bar] :percent :etas `, {
             complete: '=',
             incomplete: ' ',
             width: 20,
@@ -174,22 +187,6 @@ function onProgress(downloadedBytes, totalBytes) {
 function toMegabytes(bytes) {
     const mb = bytes / 1024 / 1024;
     return `${Math.round(mb * 10) / 10} Mb`;
-}
-
-function getRevision() {
-
-    var p1 = path.resolve(__dirname, "../puppeteer-core/package.json");
-    if (fs.existsSync(p1)) {
-        return require(p1).puppeteer.chromium_revision;
-    }
-
-    var p2 = path.resolve(__dirname, "./node_modules/puppeteer-core/package.json");
-    if (fs.existsSync(p2)) {
-        return require(p2).puppeteer.chromium_revision;
-    }
-
-    return require("./package.json").puppeteer.chromium_revision;
-
 }
 
 
