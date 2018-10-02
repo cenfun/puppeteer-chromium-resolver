@@ -4,7 +4,7 @@ const fs = require('fs');
 const os = require('os');
 const puppeteer = require('puppeteer-core');
 
-const revision = require('./node_modules/puppeteer-core/package.json').puppeteer.chromium_revision;
+const revision = getRevision();
 
 class Resolver extends EventEmitter {
     constructor(option) {
@@ -34,11 +34,14 @@ class Resolver extends EventEmitter {
 
         this.revisionInfo = browserFetcher.revisionInfo(revision);
 
-        console.log("Current chromium revision info: ");
-        console.log(JSON.stringify(this.revisionInfo, null, 2));
+        console.log("Current chromium revision info:");
+        for (let k in this.revisionInfo) {
+            console.log("  " + k + ": " + this.revisionInfo[k]);
+        }
 
         if (this.revisionInfo.local) {
-            console.log("Chromium revision is already downloaded: " + this.revisionInfo.folderPath);
+            console.log("Chromium revision is already downloaded:");
+            console.log("  " + this.revisionInfo.folderPath);
             this.finishHandler();
             return;
         }
@@ -171,6 +174,22 @@ function onProgress(downloadedBytes, totalBytes) {
 function toMegabytes(bytes) {
     const mb = bytes / 1024 / 1024;
     return `${Math.round(mb * 10) / 10} Mb`;
+}
+
+function getRevision() {
+
+    var p1 = path.resolve(__dirname, "../puppeteer-core/package.json");
+    if (fs.existsSync(p1)) {
+        return require(p1).puppeteer.chromium_revision;
+    }
+
+    var p2 = path.resolve(__dirname, "./node_modules/puppeteer-core/package.json");
+    if (fs.existsSync(p2)) {
+        return require(p2).puppeteer.chromium_revision;
+    }
+
+    return require("./package.json").puppeteer.chromium_revision;
+
 }
 
 
