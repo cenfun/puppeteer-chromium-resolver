@@ -117,12 +117,12 @@ class Resolver extends EventEmitter {
 
     findSuitableTempDirectory() {
 
-        var candidateTmpDirs = [os.tmpdir(), "./"];
+        var candidateTmpDirs = [os.homedir(), os.tmpdir(), __dirname];
 
         for (var i = 0; i < candidateTmpDirs.length; i++) {
             var candidatePath = candidateTmpDirs[i];
 
-            candidatePath = path.join(path.resolve(candidatePath), 'chromium-browser-snapshots');
+            candidatePath = path.join(path.resolve(candidatePath), '.chromium-browser-snapshots');
             if (fs.existsSync(candidatePath)) {
                 return candidatePath;
             }
