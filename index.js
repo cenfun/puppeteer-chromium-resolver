@@ -14,7 +14,7 @@ class Resolver extends EventEmitter {
         return {
             hosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
             revision: this.getRevision(),
-            savePath: this.findSuitableTempDirectory(),
+            savePath: this.getSaveFolder(),
             retry: 3
         };
     }
@@ -112,38 +112,25 @@ class Resolver extends EventEmitter {
         this.emit("finish", this.revisionInfo);
     }
 
-    findSuitableTempDirectory() {
+    getSaveFolder() {
 
-        var candidateTmpDirs = [os.homedir(), os.tmpdir(), __dirname];
-
-        for (var i = 0; i < candidateTmpDirs.length; i++) {
-            var candidatePath = candidateTmpDirs[i];
-
-            candidatePath = path.join(path.resolve(candidatePath), '.chromium-browser-snapshots');
-            if (fs.existsSync(candidatePath)) {
-                return candidatePath;
-            }
-
-            try {
-
-                fs.mkdirSync(candidatePath, '0777');
-                // Make double sure we have 0777 permissions; some operating systems
-                // default umask does not allow write by default.
-                fs.chmodSync(candidatePath, '0777');
-
-                var testFile = path.join(candidatePath, Date.now() + '.tmp');
-                fs.writeFileSync(testFile, 'test');
-                fs.unlinkSync(testFile);
-
-                return candidatePath;
-            } catch (e) {
-                console.log("Path is not writable: " + candidatePath);
-                console.log(e);
-            }
+        var homePath = os.homedir();
+        var savePath = path.resolve(homePath, '.chromium-browser-snapshots');
+        if (fs.existsSync(savePath)) {
+            return savePath;
         }
 
-        console.error('Can not find a writable tmp directory to save chromium.');
-        process.exit(1);
+        try {
+            fs.mkdirSync(savePath, '0777');
+            // Make double sure we have 0777 permissions; some operating systems
+            // default umask does not allow write by default.
+            fs.chmodSync(savePath, '0777');
+            return savePath;
+        } catch (e) {
+            console.log("Path is not writable: " + savePath);
+            console.log(e);
+        }
+
     }
 
     getRevision() {
