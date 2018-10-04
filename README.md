@@ -3,7 +3,7 @@
 * A tool to customize puppeteer
 * Able to download chromium from custom/mirror host.
 * Save chromium to global user/temp folder, saving disk space and do not download again if exists
-* Returns puppeteer and executablePath
+* Returns [puppeteer](https://github.com/GoogleChrome/puppeteer) and executablePath
 
 ## Install 
 ```
