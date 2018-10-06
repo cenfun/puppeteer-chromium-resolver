@@ -97,7 +97,7 @@ class Resolver extends EventEmitter {
         if (this.index >= this.option.hosts.length) {
             this.index = 0;
             this.retry += 1;
-            if (this.retry > this.option.retry) {
+            if (this.retry >= this.option.retry) {
                 console.error(`ERROR: Failed to download Chromium after retry ${this.retry} times. `);
                 process.exit(1);
                 return;
