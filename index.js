@@ -34,7 +34,7 @@ class Resolver extends EventEmitter {
         if (this.revisionInfo.local) {
             console.log("Chromium revision is already downloaded:");
             console.log(this.revisionInfo.folderPath);
-            this.finishHandler();
+            this.launchHandler();
             return;
         }
 
@@ -69,7 +69,7 @@ class Resolver extends EventEmitter {
                 return Promise.all([...cleanupOldVersions]);
             })
             .then(() => {
-                self.finishHandler();
+                self.launchHandler();
             })
             .catch((error) => {
                 console.error(`ERROR: Failed to download Chromium r${this.option.revision}. retry ...`);
@@ -103,20 +103,28 @@ class Resolver extends EventEmitter {
         this.download();
     }
 
+    launchHandler() {
+        this.launchable = false;
+
+        var self = this;
+        puppeteer.launch({
+            //fix root issue
+            args: ['--no-sandbox'],
+            executablePath: this.revisionInfo.executablePath
+        }).then(function (browser) {
+            if (browser) {
+                self.launchable = true;
+                browser.close();
+            }
+            self.finishHandler();
+        }, function () {
+            self.finishHandler();
+        });
+    }
+
     finishHandler() {
 
-        var launchable = true;
-        try {
-            puppeteer.launch({
-                args: ['--no-sandbox'],
-                executablePath: this.revisionInfo.executablePath
-            });
-        } catch (e) {
-            console.log(e);
-            launchable = false;
-        }
-
-        this.revisionInfo.launchable = launchable;
+        this.revisionInfo.launchable = this.launchable;
         this.revisionInfo.puppeteer = puppeteer;
 
         console.log("==================================================");
@@ -127,6 +135,7 @@ class Resolver extends EventEmitter {
         console.log("==================================================");
 
         this.emit("finish", this.revisionInfo);
+
     }
 
     getSaveFolder() {
