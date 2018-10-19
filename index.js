@@ -31,14 +31,9 @@ class Resolver extends EventEmitter {
 
         this.revisionInfo = browserFetcher.revisionInfo(this.option.revision);
 
-        console.log("Current chromium revision info:");
-        for (let k in this.revisionInfo) {
-            console.log("  " + k + ": " + this.revisionInfo[k]);
-        }
-
         if (this.revisionInfo.local) {
             console.log("Chromium revision is already downloaded:");
-            console.log("  " + this.revisionInfo.folderPath);
+            console.log(this.revisionInfo.folderPath);
             this.finishHandler();
             return;
         }
@@ -109,6 +104,28 @@ class Resolver extends EventEmitter {
     }
 
     finishHandler() {
+
+        var launchable = true;
+        try {
+            puppeteer.launch({
+                args: ['--no-sandbox'],
+                executablePath: this.revisionInfo.executablePath
+            });
+        } catch (e) {
+            console.log(e);
+            launchable = false;
+        }
+
+        this.revisionInfo.launchable = launchable;
+        this.revisionInfo.puppeteer = puppeteer;
+
+        console.log("==================================================");
+        console.log("Chromium revision info:");
+        for (let k in this.revisionInfo) {
+            console.log("  " + k + ": " + this.revisionInfo[k]);
+        }
+        console.log("==================================================");
+
         this.emit("finish", this.revisionInfo);
     }
 
@@ -184,7 +201,6 @@ module.exports = function (option) {
 
         var resolver = new Resolver(option);
         resolver.on("finish", (revisionInfo) => {
-            revisionInfo.puppeteer = puppeteer;
             resolve(revisionInfo);
         });
         resolver.start();

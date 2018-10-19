@@ -12,11 +12,13 @@ npm install puppeteer-chromium-resolver --save
 ## Usage
 ```
 require("puppeteer-chromium-resolver")({
+    //savePath: "./",
     //hosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"]
 }).then(function (revisionInfo) {
-    console.log("Chromium revision installed.");
+    console.log("Chromium revision installed and launchable is " + revisionInfo.launchable);
     revisionInfo.puppeteer.launch({
-        headless: false,
+        headless: true,
+        args: ['--no-sandbox'],
         executablePath: revisionInfo.executablePath
     });
 });
