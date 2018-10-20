@@ -117,7 +117,8 @@ class Resolver extends EventEmitter {
                 browser.close();
             }
             self.finishHandler();
-        }, function () {
+        }, function (e) {
+            console.log(e);
             self.finishHandler();
         });
     }
