@@ -1,6 +1,7 @@
 
 ![npm](https://img.shields.io/npm/v/puppeteer-chromium-resolver.svg)
-
+![npm](https://img.shields.io/npm/dt/puppeteer-chromium-resolver.svg)
+![David](https://img.shields.io/david/cenfun/puppeteer-chromium-resolver.svg)
 
 # Puppeteer Chromium Resolver
 * A tool to customize puppeteer
