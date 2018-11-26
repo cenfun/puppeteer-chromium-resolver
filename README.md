@@ -1,4 +1,7 @@
 
+![npm](https://img.shields.io/npm/v/puppeteer-chromium-resolver.svg)
+
+
 # Puppeteer Chromium Resolver
 * A tool to customize puppeteer
 * Able to download chromium from custom/mirror host.
