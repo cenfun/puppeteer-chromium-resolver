@@ -2,7 +2,7 @@
 # Puppeteer Chromium Resolver
 * A tool to customize puppeteer
 * Able to download chromium from custom/mirror host.
-* Save chromium to global user/temp folder, saving disk space and do not download again if exists
+* Save chromium to user path, saving space and using cache if exists
 * Returns [puppeteer](https://github.com/GoogleChrome/puppeteer) and executablePath
 
 ## Install 

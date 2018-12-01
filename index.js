@@ -116,14 +116,14 @@ class Resolver extends EventEmitter {
                 self.launchable = true;
                 browser.close();
             }
-            self.finishHandler();
+            self.resolveHandler();
         }, function (e) {
             console.log(e);
-            self.finishHandler();
+            self.resolveHandler();
         });
     }
 
-    finishHandler() {
+    resolveHandler() {
 
         this.revisionInfo.launchable = this.launchable;
         this.revisionInfo.puppeteer = puppeteer;
@@ -135,7 +135,7 @@ class Resolver extends EventEmitter {
         }
         console.log("==================================================");
 
-        this.emit("finish", this.revisionInfo);
+        this.emit("resolve", this.revisionInfo);
 
     }
 
@@ -207,10 +207,10 @@ function toMegabytes(bytes) {
 module.exports = function (option) {
     option = option || {};
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
 
         var resolver = new Resolver(option);
-        resolver.on("finish", (revisionInfo) => {
+        resolver.on("resolve", (revisionInfo) => {
             resolve(revisionInfo);
         });
         resolver.start();

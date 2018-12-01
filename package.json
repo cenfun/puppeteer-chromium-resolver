@@ -1,13 +1,13 @@
 {
   "name": "puppeteer-chromium-resolver",
-  "version": "1.0.7",
-  "description": "Download chromium from mirror host and save to global user folder, returns puppeteer and executablePath",
+  "version": "1.0.8",
+  "description": "Download chromium from mirror host and save to user path, returns puppeteer and executablePath",
   "main": "index.js",
   "dependencies": {
-    "puppeteer-core": "^1.9.0"
+    "puppeteer-core": "^1.11.0"
   },
   "puppeteer": {
-    "chromium_revision": "594312"
+    "chromium_revision": "609904"
   },
   "repository": {
     "type": "git",
