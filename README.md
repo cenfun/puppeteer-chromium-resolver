@@ -1,5 +1,10 @@
 
 # Puppeteer Chromium Resolver
+
+![npm](https://img.shields.io/npm/v/puppeteer-chromium-resolver.svg)
+![npm](https://img.shields.io/npm/dt/puppeteer-chromium-resolver.svg)
+![David](https://img.shields.io/david/cenfun/puppeteer-chromium-resolver.svg)
+
 * A tool to customize puppeteer
 * Able to download chromium from custom/mirror host.
 * Save chromium to user path, saving space and using cache if exists
