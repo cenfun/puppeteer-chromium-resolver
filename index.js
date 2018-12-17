@@ -12,33 +12,60 @@ class Resolver extends EventEmitter {
 
     defaultOption() {
         return {
+            revision: "",
+            detectionPath: "",
+            folderName: '.chromium-browser-snapshots',
             hosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
-            revision: this.getRevision(),
-            savePath: this.getSaveFolder(),
             retry: 3
         };
     }
 
-    start() {
+    async start() {
 
-        this.index = 0;
-        this.retry = 0;
-        this.savePath = path.resolve(this.option.savePath);
+        this.revision = this.getRevision();
+        console.log("Resolve chromium revision: " + this.revision);
 
-        const browserFetcher = puppeteer.createBrowserFetcher({
-            path: this.savePath
-        });
+        this.userFolder = this.getUserFolder();
 
-        this.revisionInfo = browserFetcher.revisionInfo(this.option.revision);
+        this.detectionList = this.getDetectionList();
+        console.log("Detecting local chromium ...");
+        //console.log(this.detectionList.join("\n"));
 
-        if (this.revisionInfo.local) {
-            console.log("Chromium revision is already downloaded:");
-            console.log(this.revisionInfo.folderPath);
+        var revisionInfo = await this.detectionHandler();
+        if (revisionInfo) {
+            this.revisionInfo = revisionInfo;
             this.launchHandler();
             return;
         }
 
+        //Not found, try to download to user folder
+        this.revisionInfo = this.userRevisionInfo;
+        this.index = 0;
+        this.retry = 0;
         this.download();
+    }
+
+    async detectionPathHandler(detectionPath) {
+        detectionPath = path.resolve(detectionPath);
+        let browserFetcher = puppeteer.createBrowserFetcher({
+            path: detectionPath
+        });
+        let revisionInfo = browserFetcher.revisionInfo(this.revision);
+        return revisionInfo;
+    }
+
+    async detectionHandler() {
+        for (let detectionPath of this.detectionList) {
+            let revisionInfo = await this.detectionPathHandler(detectionPath);
+            if (detectionPath === this.userFolder) {
+                this.userRevisionInfo = revisionInfo;
+            }
+            if (revisionInfo.local) {
+                console.log("Detected chromium revision is already downloaded.");
+                return revisionInfo;
+            }
+        }
+        return null;
     }
 
     download() {
@@ -55,15 +82,15 @@ class Resolver extends EventEmitter {
 
         const browserFetcher = puppeteer.createBrowserFetcher({
             host: host,
-            path: this.savePath
+            path: this.userFolder
         });
 
         var self = this;
-        browserFetcher.download(this.revisionInfo.revision, onProgress)
+        browserFetcher.download(this.revision, onProgress)
             .then(() => browserFetcher.localRevisions())
             .then((localRevisions) => {
-                console.log('Chromium downloaded to ' + self.revisionInfo.folderPath);
-                localRevisions = localRevisions.filter(revision => revision !== self.revisionInfo.revision);
+                console.log('Chromium downloaded to ' + self.userFolder);
+                localRevisions = localRevisions.filter(revision => revision !== self.revision);
                 // Remove previous chromium revisions.
                 const cleanupOldVersions = localRevisions.map(revision => browserFetcher.remove(revision));
                 return Promise.all([...cleanupOldVersions]);
@@ -72,7 +99,7 @@ class Resolver extends EventEmitter {
                 self.launchHandler();
             })
             .catch((error) => {
-                console.error(`ERROR: Failed to download Chromium r${this.option.revision}. retry ...`);
+                console.error(`ERROR: Failed to download Chromium r${self.revision}. retry ...`);
                 console.error(error);
                 self.next();
             });
@@ -97,30 +124,29 @@ class Resolver extends EventEmitter {
                 process.exit(1);
                 return;
             }
-            console.log('Retry download Chromium ... ');
+            console.log('Retry Chromium downloading ... ');
         }
 
         this.download();
     }
 
-    launchHandler() {
+    async launchHandler() {
         this.launchable = false;
 
-        var self = this;
-        puppeteer.launch({
+        var browser = await puppeteer.launch({
             //fix root issue
             args: ['--no-sandbox'],
             executablePath: this.revisionInfo.executablePath
-        }).then(function (browser) {
-            if (browser) {
-                self.launchable = true;
-                browser.close();
-            }
-            self.resolveHandler();
-        }, function (e) {
-            console.log(e);
-            self.resolveHandler();
+        }).catch(function (error) {
+            console.log(error);
         });
+
+        if (browser) {
+            this.launchable = true;
+            browser.close();
+        }
+
+        this.resolveHandler();
     }
 
     resolveHandler() {
@@ -128,39 +154,43 @@ class Resolver extends EventEmitter {
         this.revisionInfo.launchable = this.launchable;
         this.revisionInfo.puppeteer = puppeteer;
 
-        console.log("==================================================");
+        console.log("================================================================================");
         console.log("Chromium revision info:");
         for (let k in this.revisionInfo) {
             console.log("  " + k + ": " + this.revisionInfo[k]);
         }
-        console.log("==================================================");
+        console.log("================================================================================");
 
         this.emit("resolve", this.revisionInfo);
 
     }
 
-    getSaveFolder() {
+    getUserFolder() {
 
         var homePath = os.homedir();
-        var savePath = path.resolve(homePath, '.chromium-browser-snapshots');
-        if (fs.existsSync(savePath)) {
-            return savePath;
+        var userFolder = path.resolve(homePath, this.option.folderName);
+        if (fs.existsSync(userFolder)) {
+            return userFolder;
         }
 
         try {
-            fs.mkdirSync(savePath, '0777');
+            fs.mkdirSync(userFolder, '0777');
             // Make double sure we have 0777 permissions; some operating systems
             // default umask does not allow write by default.
-            fs.chmodSync(savePath, '0777');
-            return savePath;
+            fs.chmodSync(userFolder, '0777');
         } catch (e) {
-            console.log("Path is not writable: " + savePath);
+            console.log("User path is not writable: " + userFolder);
             console.log(e);
         }
 
+        return userFolder;
     }
 
     getRevision() {
+
+        if (this.option.revision) {
+            return this.option.revision;
+        }
 
         var p1 = path.resolve(__dirname, "../puppeteer-core/package.json");
         if (fs.existsSync(p1)) {
@@ -173,6 +203,43 @@ class Resolver extends EventEmitter {
         }
 
         return require("./package.json").puppeteer.chromium_revision;
+
+    }
+
+    getDetectionPath() {
+        var detectionPath = this.option.detectionPath;
+        if (Array.isArray(detectionPath)) {
+            return detectionPath;
+        }
+        detectionPath = detectionPath + "";
+        if (detectionPath) {
+            return detectionPath.split(",");
+        }
+        return [];
+    }
+
+    getDetectionList() {
+
+        var detectionList = this.getDetectionPath();
+        detectionList.push(this.userFolder);
+
+        var folderName = this.option.folderName;
+
+        var level = 0;
+        var maxLevel = 5;
+        var current = process.cwd();
+        while (current && level < maxLevel) {
+            detectionList.push(path.resolve(current, folderName));
+            var parent = path.resolve(current, "../");
+            if (parent === current) {
+                current = "";
+            } else {
+                current = parent;
+            }
+            level += 1;
+        }
+
+        return detectionList;
 
     }
 
