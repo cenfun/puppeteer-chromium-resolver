@@ -4,6 +4,16 @@ const fs = require('fs');
 const os = require('os');
 const puppeteer = require('puppeteer-core');
 
+const Gauge = require('gauge');
+const gauge = new Gauge();
+
+function output() {
+    gauge.disable();
+    console.log.apply(console, arguments);
+    gauge.enable();
+}
+
+
 class Resolver extends EventEmitter {
     constructor(option) {
         super();
@@ -23,13 +33,13 @@ class Resolver extends EventEmitter {
     async start() {
 
         this.revision = this.getRevision();
-        console.log("Resolve chromium revision: " + this.revision);
+        output("Resolve chromium revision: " + this.revision);
 
         this.userFolder = this.getUserFolder();
 
         this.detectionList = this.getDetectionList();
-        console.log("Detecting local chromium ...");
-        //console.log(this.detectionList.join("\n"));
+        output("Detecting local chromium ...");
+        //output(this.detectionList.join("\n"));
 
         var revisionInfo = await this.detectionHandler();
         if (revisionInfo) {
@@ -61,7 +71,7 @@ class Resolver extends EventEmitter {
                 this.userRevisionInfo = revisionInfo;
             }
             if (revisionInfo.local) {
-                console.log("Detected chromium revision is already downloaded.");
+                output("Detected chromium revision is already downloaded.");
                 return revisionInfo;
             }
         }
@@ -78,7 +88,7 @@ class Resolver extends EventEmitter {
 
         var mirror = this.index === 0 ? "host" : "mirror host";
 
-        console.log("Download from " + mirror + ": " + host + " ...");
+        output("Download from " + mirror + ": " + host + " ...");
 
         const browserFetcher = puppeteer.createBrowserFetcher({
             host: host,
@@ -89,7 +99,7 @@ class Resolver extends EventEmitter {
         browserFetcher.download(this.revision, onProgress)
             .then(() => browserFetcher.localRevisions())
             .then((localRevisions) => {
-                console.log('Chromium downloaded to ' + self.userFolder);
+                output('Chromium downloaded to ' + self.userFolder);
                 localRevisions = localRevisions.filter(revision => revision !== self.revision);
                 // Remove previous chromium revisions.
                 const cleanupOldVersions = localRevisions.map(revision => browserFetcher.remove(revision));
@@ -124,7 +134,7 @@ class Resolver extends EventEmitter {
                 process.exit(1);
                 return;
             }
-            console.log('Retry Chromium downloading ... ');
+            output('Retry Chromium downloading ... ');
         }
 
         this.download();
@@ -138,7 +148,7 @@ class Resolver extends EventEmitter {
             args: ['--no-sandbox'],
             executablePath: this.revisionInfo.executablePath
         }).catch(function (error) {
-            console.log(error);
+            output(error);
         });
 
         if (browser) {
@@ -153,13 +163,11 @@ class Resolver extends EventEmitter {
 
         this.revisionInfo.launchable = this.launchable;
         this.revisionInfo.puppeteer = puppeteer;
+        this.revisionInfo.puppeteerVersion = this.getPuppeteerVersion();
 
-        console.log("================================================================================");
-        console.log("Chromium revision info:");
-        for (let k in this.revisionInfo) {
-            console.log("  " + k + ": " + this.revisionInfo[k]);
-        }
-        console.log("================================================================================");
+        output(`Chromium executablePath: ${this.revisionInfo.executablePath}`);
+        output(`Chromium launchable: ${this.revisionInfo.launchable}`);
+        output(`puppeteer version: ${this.revisionInfo.puppeteerVersion}`);
 
         this.emit("resolve", this.revisionInfo);
 
@@ -179,8 +187,8 @@ class Resolver extends EventEmitter {
             // default umask does not allow write by default.
             fs.chmodSync(userFolder, '0777');
         } catch (e) {
-            console.log("User path is not writable: " + userFolder);
-            console.log(e);
+            output("User path is not writable: " + userFolder);
+            output(e);
         }
 
         return userFolder;
@@ -192,18 +200,42 @@ class Resolver extends EventEmitter {
             return this.option.revision;
         }
 
-        var p1 = path.resolve(__dirname, "../puppeteer-core/package.json");
-        if (fs.existsSync(p1)) {
-            return require(p1).puppeteer.chromium_revision;
-        }
-
-        var p2 = path.resolve(__dirname, "./node_modules/puppeteer-core/package.json");
-        if (fs.existsSync(p2)) {
-            return require(p2).puppeteer.chromium_revision;
+        var conf = this.getPuppeteerConf();
+        if (conf) {
+            return conf.puppeteer.chromium_revision;
         }
 
         return require("./package.json").puppeteer.chromium_revision;
 
+    }
+
+    getPuppeteerVersion() {
+        var conf = this.getPuppeteerConf();
+        if (conf) {
+            return conf.version;
+        }
+        return "";
+    }
+
+    getPuppeteerConf() {
+
+        if (this.puppeteerConf) {
+            return this.puppeteerConf;
+        }
+
+        var p1 = path.resolve(__dirname, "../puppeteer-core/package.json");
+        if (fs.existsSync(p1)) {
+            this.puppeteerConf = require(p1);
+            return this.puppeteerConf;
+        }
+
+        var p2 = path.resolve(__dirname, "./node_modules/puppeteer-core/package.json");
+        if (fs.existsSync(p2)) {
+            this.puppeteerConf = require(p2);
+            return this.puppeteerConf;
+        }
+
+        return null;
     }
 
     getDetectionPath() {
@@ -246,23 +278,12 @@ class Resolver extends EventEmitter {
 
 }
 
-
-let progressBar = null;
-let lastDownloadedBytes = 0;
-
 function onProgress(downloadedBytes, totalBytes) {
-    if (!progressBar) {
-        const ProgressBar = require('progress');
-        progressBar = new ProgressBar(`Downloading Chromium - ${toMegabytes(totalBytes)} [:bar] :percent :etas `, {
-            complete: '=',
-            incomplete: ' ',
-            width: 20,
-            total: totalBytes,
-        });
+    var per = 0;
+    if (totalBytes) {
+        per = downloadedBytes / totalBytes;
     }
-    const delta = downloadedBytes - lastDownloadedBytes;
-    lastDownloadedBytes = downloadedBytes;
-    progressBar.tick(delta);
+    gauge.show(`Downloading Chromium - ${toMegabytes(downloadedBytes)} / ${toMegabytes(totalBytes)}`, per);
 }
 
 function toMegabytes(bytes) {

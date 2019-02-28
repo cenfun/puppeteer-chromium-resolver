@@ -1,3 +1,3 @@
 require("./index.js")({}).then(function (revisionInfo) {
-    console.log("Chromium revision installed and launchable is " + revisionInfo.launchable);
+    console.log("Chromium and puppeteer installed");
 });
