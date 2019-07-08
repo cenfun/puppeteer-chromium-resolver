@@ -165,9 +165,12 @@ class Resolver extends EventEmitter {
         this.revisionInfo.puppeteer = puppeteer;
         this.revisionInfo.puppeteerVersion = this.getPuppeteerVersion();
 
-        output(`Chromium executablePath: ${this.revisionInfo.executablePath}`);
-        output(`Chromium launchable: ${this.revisionInfo.launchable}`);
+        output(`chromium executablePath: ${this.revisionInfo.executablePath}`);
+        output(`chromium launchable: ${this.revisionInfo.launchable}`);
         output(`puppeteer version: ${this.revisionInfo.puppeteerVersion}`);
+
+        //close gauge
+        gauge.disable();
 
         this.emit("resolve", this.revisionInfo);
 

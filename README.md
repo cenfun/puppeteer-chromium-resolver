@@ -1,5 +1,6 @@
 
 # Puppeteer Chromium Resolver
+> Tool to resolve puppeteer's chromium faster, detect local installed chromium, download chromium with custom/mirror host, cache chromium revision out of node_modules, test chromium headless being launchable.
 
 ![npm](https://img.shields.io/npm/v/puppeteer-chromium-resolver.svg)
 ![npm](https://img.shields.io/npm/dt/puppeteer-chromium-resolver.svg)
@@ -18,18 +19,8 @@ npm install puppeteer-chromium-resolver --save
 ```
 ## Usage
 ```js
-
 var puppeteerResolver = require("puppeteer-chromium-resolver");
-var revisionInfo = await puppeteerResolver({
-    revision: "",
-    detectionPath: "",
-    folderName: '.chromium-browser-snapshots',
-    hosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
-    retry: 3
-});
-
-console.log("Chromium revision installed and launchable is " + revisionInfo.launchable);
-
+var revisionInfo = await puppeteerResolver();
 var browser = await revisionInfo.puppeteer.launch({
     headless: true,
     args: ['--no-sandbox'],
@@ -37,9 +28,23 @@ var browser = await revisionInfo.puppeteer.launch({
 }).catch(function (error) {
     console.log(error);
 });
-
 var page = await browser.newPage();
 await page.goto('https://www.google.com');
 await browser.close();
-
 ```
+
+## Default Option
+```js
+var revisionInfo = await puppeteerResolver({
+    revision: "",
+    detectionPath: "",
+    folderName: '.chromium-browser-snapshots',
+    hosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
+    retry: 3
+});
+```
+
+## CHANGELOG
++ v1.0.12
+  - updated puppeteer-core version to v1.18.1
+  - fixed a gauge log issue
