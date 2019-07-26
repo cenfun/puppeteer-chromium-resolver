@@ -2,6 +2,8 @@ const EventEmitter = require('events');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const util = require('util');
+const URL = require('url');
 const puppeteer = require('puppeteer-core');
 
 const Gauge = require('gauge');
@@ -11,6 +13,43 @@ function output() {
     gauge.disable();
     console.log.apply(console, arguments);
     gauge.enable();
+}
+
+async function httpRequest(url, method, timeout) {
+    return new Promise(function (resolve) {
+        console.log("request " + url);
+        var options = URL.parse(url);
+        options.method = method;
+        options.timeout = timeout;
+        var req;
+        if (options.protocol === 'https:') {
+            req = require('https').request(options);
+        } else {
+            req = require('http').request(options);
+        }
+        req.setTimeout(timeout);
+        req.on('response', async (res) => {
+            req.abort();
+            //console.log(res.statusCode);
+            if (res.statusCode === 200) {
+                resolve(true);
+                return;
+            }
+            if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+                var value = await httpRequest(res.headers.location, method, timeout);
+                resolve(value);
+                return;
+            }
+            resolve(false);
+        });
+        req.on('error', () => {
+            resolve();
+        });
+        req.on('timeout', () => {
+            resolve();
+        });
+        req.end();
+    });
 }
 
 
@@ -92,6 +131,31 @@ class Resolver extends EventEmitter {
         gauge.show(`Downloading Chromium - ${this.toMegabytes(downloadedBytes)} / ${this.toMegabytes(totalBytes)}`, per);
     }
 
+    archiveName(platform, revision) {
+        if (platform === 'linux') {
+            return 'chrome-linux';
+        }
+        if (platform === 'mac') {
+            return 'chrome-mac';
+        }
+        if (platform === 'win32' || platform === 'win64') {
+            // Windows archive name changed at r591479.
+            return parseInt(revision, 10) > 591479 ? 'chrome-win' : 'chrome-win32';
+        }
+        return null;
+    }
+
+    getDownloadUrl(browserFetcher, host, revision) {
+        const downloadURLs = {
+            linux: '%s/chromium-browser-snapshots/Linux_x64/%d/%s.zip',
+            mac: '%s/chromium-browser-snapshots/Mac/%d/%s.zip',
+            win32: '%s/chromium-browser-snapshots/Win/%d/%s.zip',
+            win64: '%s/chromium-browser-snapshots/Win_x64/%d/%s.zip',
+        };
+        var platform = browserFetcher.platform();
+        return util.format(downloadURLs[platform], host, revision, this.archiveName(platform, revision));
+    }
+
     async download() {
 
         var host = this.option.hosts[this.index];
@@ -109,11 +173,10 @@ class Resolver extends EventEmitter {
             path: this.userFolder
         });
 
-        //TODO ping host first
+        var downloadUrl = this.getDownloadUrl(browserFetcher, host, this.revision);
+        var res = await httpRequest(downloadUrl, 'GET', 5000);
 
-        var canDownload = await browserFetcher.canDownload(this.revision);
-        output("Can download " + this.revision + ": " + canDownload);
-        if (!canDownload) {
+        if (!res) {
             this.next();
             return;
         }
