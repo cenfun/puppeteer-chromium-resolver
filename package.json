@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "gauge": "^2.7.4",
-    "puppeteer-core": "^1.18.1"
+    "puppeteer-core": "^1.19.0"
   },
   "puppeteer": {
     "chromium_revision": "674921"

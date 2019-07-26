@@ -48,11 +48,12 @@ class Resolver extends EventEmitter {
             return;
         }
 
+        output("Not found local chromium");
         //Not found, try to download to user folder
         this.revisionInfo = this.userRevisionInfo;
         this.index = 0;
         this.retry = 0;
-        this.download();
+        await this.download();
     }
 
     async detectionPathHandler(detectionPath) {
@@ -78,7 +79,20 @@ class Resolver extends EventEmitter {
         return null;
     }
 
-    download() {
+    toMegabytes(bytes) {
+        const mb = bytes / 1024 / 1024;
+        return `${Math.round(mb * 10) / 10} Mb`;
+    }
+
+    showProgress(downloadedBytes, totalBytes) {
+        var per = 0;
+        if (totalBytes) {
+            per = downloadedBytes / totalBytes;
+        }
+        gauge.show(`Downloading Chromium - ${this.toMegabytes(downloadedBytes)} / ${this.toMegabytes(totalBytes)}`, per);
+    }
+
+    async download() {
 
         var host = this.option.hosts[this.index];
         if (!host) {
@@ -95,25 +109,54 @@ class Resolver extends EventEmitter {
             path: this.userFolder
         });
 
-        var self = this;
-        browserFetcher.download(this.revision, onProgress)
-            .then(() => browserFetcher.localRevisions())
-            .then((localRevisions) => {
-                output('Chromium downloaded to ' + self.userFolder);
-                localRevisions = localRevisions.filter(revision => revision !== self.revision);
-                // Remove previous chromium revisions.
-                const cleanupOldVersions = localRevisions.map(revision => browserFetcher.remove(revision));
-                return Promise.all([...cleanupOldVersions]);
-            })
-            .then(() => {
-                self.launchHandler();
-            })
-            .catch((error) => {
-                console.error(`ERROR: Failed to download Chromium r${self.revision}. retry ...`);
-                console.error(error);
-                self.next();
-            });
+        //TODO ping host first
 
+        var canDownload = await browserFetcher.canDownload(this.revision);
+        output("Can download " + this.revision + ": " + canDownload);
+        if (!canDownload) {
+            this.next();
+            return;
+        }
+
+        await this.downloadNow(browserFetcher);
+
+    }
+
+    async downloadNow(browserFetcher) {
+        var self = this;
+
+        this.timeout_download = setTimeout(function () {
+            self.next();
+        }, 30 * 1000);
+
+        this.downloading = false;
+        await browserFetcher.download(this.revision, function (downloadedBytes, totalBytes) {
+            if (!self.downloading) {
+                self.downloading = true;
+                clearTimeout(self.timeout_download);
+            }
+            self.showProgress(downloadedBytes, totalBytes);
+        }).catch((error) => {
+            console.error(`ERROR: Failed to download Chromium r${self.revision}. retry ...`);
+            console.error(error);
+            self.next();
+        });
+
+        if (!this.downloading) {
+            return;
+        }
+
+        output('Chromium downloaded to ' + this.userFolder);
+
+        // Remove previous chromium revisions.
+        var localRevisions = await browserFetcher.localRevisions();
+        if (localRevisions) {
+            localRevisions = localRevisions.filter(revision => revision !== this.revision);
+            const cleanupOldVersions = localRevisions.map(revision => browserFetcher.remove(revision));
+            await Promise.all([...cleanupOldVersions]);
+        }
+
+        this.launchHandler();
     }
 
     next() {
@@ -153,6 +196,7 @@ class Resolver extends EventEmitter {
 
         if (browser) {
             this.launchable = true;
+            this.chromiumVersion = await browser.version();
             browser.close();
         }
 
@@ -162,12 +206,14 @@ class Resolver extends EventEmitter {
     resolveHandler() {
 
         this.revisionInfo.launchable = this.launchable;
+        this.revisionInfo.chromiumVersion = this.chromiumVersion;
         this.revisionInfo.puppeteer = puppeteer;
         this.revisionInfo.puppeteerVersion = this.getPuppeteerVersion();
 
-        output(`chromium executablePath: ${this.revisionInfo.executablePath}`);
-        output(`chromium launchable: ${this.revisionInfo.launchable}`);
-        output(`puppeteer version: ${this.revisionInfo.puppeteerVersion}`);
+        output(`Chromium executablePath: ${this.revisionInfo.executablePath}`);
+        output(`Chromium launchable: ${this.revisionInfo.launchable}`);
+        output(`Chromium version: ${this.revisionInfo.chromiumVersion}`);
+        output(`Puppeteer version: ${this.revisionInfo.puppeteerVersion}`);
 
         //close gauge
         gauge.disable();
@@ -279,19 +325,6 @@ class Resolver extends EventEmitter {
     }
 
 
-}
-
-function onProgress(downloadedBytes, totalBytes) {
-    var per = 0;
-    if (totalBytes) {
-        per = downloadedBytes / totalBytes;
-    }
-    gauge.show(`Downloading Chromium - ${toMegabytes(downloadedBytes)} / ${toMegabytes(totalBytes)}`, per);
-}
-
-function toMegabytes(bytes) {
-    const mb = bytes / 1024 / 1024;
-    return `${Math.round(mb * 10) / 10} Mb`;
 }
 
 
