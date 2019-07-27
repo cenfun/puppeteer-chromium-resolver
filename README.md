@@ -45,6 +45,10 @@ var revisionInfo = await puppeteerResolver({
 ```
 
 ## CHANGELOG
++ v2.0.0
+  - refactoring
+  - fixed requesting timeout
+
 + v1.0.12
   - updated puppeteer-core version to v1.18.1
   - fixed a gauge log issue
