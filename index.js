@@ -272,7 +272,6 @@ const detectionHandler = (option) => {
 };
 
 const detectionLocalChromium = (option) => {
-    output("Detecting local chromium ...");
     option.detectionList = initDetectionList(option);
     //output(detectionList.join("\n"));
     var revisionInfo = detectionHandler(option);
@@ -353,29 +352,25 @@ const revisionHandler = (option) => {
 
     let revisionInfo = option.revisionInfo;
 
+    //Chromium
     revisionInfo.launchable = option.launchable;
     revisionInfo.chromiumVersion = option.chromiumVersion;
+    var launchable = Color.red("false");
+    if (revisionInfo.launchable) {
+        launchable = Color.green("true");
+        output("Chromium executablePath: " + revisionInfo.executablePath);
+        if (revisionInfo.chromiumVersion) {
+            output("Chromium version: " + revisionInfo.chromiumVersion);
+        }
+    }
+    output("Chromium launchable: " + launchable);
 
+    //Puppeteer
     revisionInfo.puppeteer = puppeteer;
-
     if (option.puppeteerConf) {
         revisionInfo.puppeteerVersion = option.puppeteerConf.version;
     }
-
-    output("Chromium executablePath: " + revisionInfo.executablePath);
-
-    var launchable = revisionInfo.launchable ? Color.green("true") : Color.red("false");
-    output("Chromium launchable: " + launchable);
-
-    if (revisionInfo.chromiumVersion) {
-        output("Chromium version: " + revisionInfo.chromiumVersion);
-        output("Chromium " + Color.green("installed"));
-    } else {
-        output("Chromium installation: " + Color.red("failed"));
-    }
-
     output("Puppeteer version: " + revisionInfo.puppeteerVersion);
-    output("Puppeteer " + Color.green("installed"));
 
     return revisionInfo;
 };
@@ -395,7 +390,7 @@ const resolver = async (option = {}) => {
     option = Object.assign(defaultOption, option);
     option.puppeteerConf = initPuppeteerConf(option);
     option.revision = initRevision(option);
-    output("Require revision: " + option.revision);
+    output("Chromium revision: " + option.revision);
     option.userFolder = initUserFolder(option);
 
     let localChromium = detectionLocalChromium(option);
