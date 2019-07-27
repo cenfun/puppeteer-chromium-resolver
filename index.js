@@ -147,10 +147,9 @@ const downloadNow = async (option, browserFetcher) => {
 
     output('Chromium downloaded to ' + option.userFolder);
 
-    // Remove previous chromium revisions.
     var localRevisions = await browserFetcher.localRevisions();
     if (localRevisions && localRevisions.length) {
-        output('Remove previous local chromium revisions ...');
+        output('Removing previous local chromium revisions ...');
         localRevisions = localRevisions.filter(revision => revision !== option.revision);
         const cleanupOldVersions = localRevisions.map(revision => browserFetcher.remove(revision));
         await Promise.all([...cleanupOldVersions]);
@@ -161,7 +160,7 @@ const downloadNow = async (option, browserFetcher) => {
 
 
 const downloadFromHost = async (option) => {
-    output("Download from host: " + option.host + " ...");
+    output("Downloading from host: " + option.host + " ...");
     const browserFetcher = puppeteer.createBrowserFetcher({
         host: option.host,
         path: option.userFolder
@@ -279,7 +278,7 @@ const detectionLocalChromium = (option) => {
     var revisionInfo = detectionHandler(option);
     if (revisionInfo) {
         option.revisionInfo = revisionInfo;
-        output("Detected chromium revision is already downloaded.");
+        output("Detected local chromium is already downloaded");
         return true;
     }
     output("Not found local chromium");
@@ -396,7 +395,7 @@ const resolver = async (option = {}) => {
     option = Object.assign(defaultOption, option);
     option.puppeteerConf = initPuppeteerConf(option);
     option.revision = initRevision(option);
-    output("Resolve chromium revision: " + option.revision);
+    output("Require revision: " + option.revision);
     option.userFolder = initUserFolder(option);
 
     let localChromium = detectionLocalChromium(option);
