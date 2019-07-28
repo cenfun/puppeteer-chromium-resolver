@@ -1,12 +1,12 @@
 
 # Puppeteer Chromium Resolver
-> Tool to resolve puppeteer's chromium faster, detect local installed chromium, download chromium with custom/mirror host, cache chromium revision out of node_modules, test chromium headless being launchable.
+> Tool to resolve puppeteer and chromium faster, detect local installed chromium, download chromium with custom mirror host, cache chromium revision out of node_modules, test chromium headless being launchable.
 
 ![npm](https://img.shields.io/npm/v/puppeteer-chromium-resolver.svg)
 ![npm](https://img.shields.io/npm/dt/puppeteer-chromium-resolver.svg)
 ![David](https://img.shields.io/david/cenfun/puppeteer-chromium-resolver.svg)
 
-* Tooling to customize [puppeteer](https://github.com/GoogleChrome/puppeteer)
+* Tool to customize [puppeteer](https://github.com/GoogleChrome/puppeteer)
 * Detect local chromium automatically
 * Download chromium from custom mirror host
 * Cache chromium to local folder
@@ -50,13 +50,13 @@ const pcr = await PCR({
 | :--------------| :------ | :----------------------  |
 |revision        | String  |current chromium revision |
 |executablePath  | String  |chromium executable path  |
-|folderPath      | String  |local cache folder        |
+|folderPath      | String  |chromium folder path      |
 |local           | Boolean |exists local chromium     |
 |url             | String  |chromium download url     |
 |launchable      | Boolean |chromium launchable       |
-|chromiumVersion | String  |headless chromium version |
+|chromiumVersion | String  |chromium version          |
 |puppeteer       | Object  |puppeteer module          |
-|puppeteerVersion| String  |current puppeteer version |
+|puppeteerVersion| String  |puppeteer version         |
 
 ## CHANGELOG
 + v2.0.1
