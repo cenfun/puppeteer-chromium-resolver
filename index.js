@@ -28,12 +28,16 @@ list.forEach((name, i) => {
     };
 });
 
+//=========================================================================================
+let outputSilent = false;
 const output = (msg, isError) => {
     gauge.disable();
-    if (isError) {
-        console.log(Color.red("[PCR] " + msg));
-    } else {
-        console.log("[PCR] " + msg);
+    if (!outputSilent) {
+        if (isError) {
+            console.log(Color.red("[PCR] " + msg));
+        } else {
+            console.log("[PCR] " + msg);
+        }
     }
     gauge.enable();
 };
@@ -385,9 +389,13 @@ const resolver = async (option = {}) => {
         folderName: '.chromium-browser-snapshots',
         defaultHosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
         hosts: [],
-        retry: 3
+        retry: 3,
+        silent: false
     };
     option = Object.assign(defaultOption, option);
+
+    outputSilent = option.silent;
+
     option.puppeteerConf = initPuppeteerConf(option);
     option.revision = initRevision(option);
     output("Chromium revision: " + option.revision);

@@ -1,6 +1,6 @@
 {
   "name": "puppeteer-chromium-resolver",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Tool to resolve puppeteer's chromium faster, detect local installed chromium, download chromium with custom/mirror host, cache chromium revision out of node_modules, test chromium headless being launchable.",
   "main": "index.js",
   "dependencies": {

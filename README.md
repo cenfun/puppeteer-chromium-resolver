@@ -6,12 +6,12 @@
 ![npm](https://img.shields.io/npm/dt/puppeteer-chromium-resolver.svg)
 ![David](https://img.shields.io/david/cenfun/puppeteer-chromium-resolver.svg)
 
-* A tool to customize [puppeteer](https://github.com/GoogleChrome/puppeteer)
-* Detect chromium from local path.
-* Download chromium from custom/mirror host.
-* Cache chromium to local.
-* Try to launch chromium and returns launchable property
-* Returns puppeteer and executablePath
+* Tooling to customize [puppeteer](https://github.com/GoogleChrome/puppeteer)
+* Detect local chromium automatically
+* Download chromium from custom mirror host
+* Cache chromium to local folder
+* Try launching chromium and resolve launchable and version
+* Resolve chromium executablePath and puppeteer
 
 ## Install 
 ```sh
@@ -19,34 +19,49 @@ npm install puppeteer-chromium-resolver --save
 ```
 ## Usage
 ```js
-var puppeteerResolver = require("puppeteer-chromium-resolver");
-var revisionInfo = await puppeteerResolver();
-var browser = await revisionInfo.puppeteer.launch({
+const PCR = require("puppeteer-chromium-resolver");
+const pcr = await PCR();
+const browser = await pcr.puppeteer.launch({
     headless: true,
     args: ['--no-sandbox'],
-    executablePath: revisionInfo.executablePath
+    executablePath: pcr.executablePath
 }).catch(function (error) {
     console.log(error);
 });
-var page = await browser.newPage();
+const page = await browser.newPage();
 await page.goto('https://www.google.com');
 await browser.close();
 ```
 
-## Default Option
+## Option
 ```js
-var revisionInfo = await puppeteerResolver({
+const pcr = await PCR({
     revision: "",
     detectionPath: "",
     folderName: '.chromium-browser-snapshots',
     hosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
-    retry: 3
+    retry: 3,
+    silent: false
 });
 ```
 
+## Properties
+|Property        | Type    |                          |
+| :--------------| :------ | :----------------------  |
+|revision        | String  |current chromium revision |
+|executablePath  | String  |chromium executable path  |
+|folderPath      | String  |local cache folder        |
+|local           | Boolean |exists local chromium     |
+|url             | String  |chromium download url     |
+|launchable      | Boolean |chromium launchable       |
+|chromiumVersion | String  |headless chromium version |
+|puppeteer       | Object  |puppeteer module          |
+|puppeteerVersion| String  |current puppeteer version |
+
 ## CHANGELOG
-+ v2.0.0
-  - refactoring
++ v2.0.1
+  - updated puppeteer-core version to v1.19.0
+  - refactoring with async/await
   - fixed requesting timeout
 
 + v1.0.12
