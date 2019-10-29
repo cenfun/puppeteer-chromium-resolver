@@ -59,6 +59,9 @@ const pcr = await PCR({
 |puppeteerVersion| String  |puppeteer version         |
 
 ## CHANGELOG
++ v3.0.0
+  - updated puppeteer-core version to v2.0.0
+
 + v2.0.1
   - updated puppeteer-core version to v1.19.0
   - refactoring with async/await
