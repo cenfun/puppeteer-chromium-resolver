@@ -40,6 +40,7 @@ const pcr = await PCR({
     detectionPath: "",
     folderName: '.chromium-browser-snapshots',
     hosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
+    cacheRevisions: 2,
     retry: 3,
     silent: false
 });
@@ -59,6 +60,11 @@ const pcr = await PCR({
 |puppeteerVersion| String  |puppeteer version         |
 
 ## CHANGELOG
+
++ v3.0.1
++ v2.0.2
+  - added option cacheRevisions to cache multiple revisions
+
 + v3.0.0
   - updated puppeteer-core version to v2.0.0
 
