@@ -153,10 +153,15 @@ const downloadNow = async (option, browserFetcher) => {
 
     var localRevisions = await browserFetcher.localRevisions();
     if (localRevisions && localRevisions.length) {
-        output('Removing previous local chromium revisions ...');
+        output('Checking previous local chromium revisions ...');
         localRevisions = localRevisions.filter(revision => revision !== option.revision);
-        const cleanupOldVersions = localRevisions.map(revision => browserFetcher.remove(revision));
-        await Promise.all([...cleanupOldVersions]);
+        if (localRevisions.length > option.cacheRevisions) {
+            localRevisions.sort();
+            localRevisions.length -= option.cacheRevisions;
+            output("Removing useless revisions " + localRevisions.join(", "));
+            const cleanupOldVersions = localRevisions.map(revision => browserFetcher.remove(revision));
+            await Promise.all([...cleanupOldVersions]);
+        }
     }
 
     return true;
@@ -389,6 +394,7 @@ const resolver = async (option = {}) => {
         folderName: '.chromium-browser-snapshots',
         defaultHosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
         hosts: [],
+        cacheRevisions: 2,
         retry: 3,
         silent: false
     };
