@@ -61,6 +61,10 @@ const pcr = await PCR({
 
 ## CHANGELOG
 
++ v3.1.0
+  - updated puppeteer-core version to 2.1.1
+  - auto detect host response time and download from quicker one
+
 + v3.0.1
 + v2.0.2
   - added option cacheRevisions to cache multiple revisions

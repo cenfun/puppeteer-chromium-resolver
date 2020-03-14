@@ -1,10 +1,8 @@
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
-const util = require('util');
-const URL = require('url');
 const puppeteer = require('puppeteer-core');
-
+const PingMonitor = require('ping-monitor');
 const Gauge = require('gauge');
 const gauge = new Gauge();
 
@@ -44,54 +42,6 @@ const output = (msg, isError) => {
 
 //=========================================================================================
 
-const tryRequest = (url, method, timeout) => {
-    return new Promise((resolve) => {
-        output("Try requesting " + url);
-        var options = URL.parse(url);
-        options.method = method;
-        options.timeout = timeout;
-        var req;
-        if (options.protocol === 'https:') {
-            req = require('https').request(options);
-        } else {
-            req = require('http').request(options);
-        }
-        var timeoutId = setTimeout(() => {
-            req.abort();
-            resolve();
-        }, timeout + 1000);
-        req.setTimeout(timeout);
-        req.on('response', async (res) => {
-            clearTimeout(timeoutId);
-            req.abort();
-            //output(res.statusCode);
-            if (res.statusCode === 200) {
-                resolve(true);
-                return;
-            }
-            if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-                var value = await tryRequest(res.headers.location, method, timeout);
-                resolve(value);
-                return;
-            }
-            resolve();
-        });
-        req.on('error', () => {
-            clearTimeout(timeoutId);
-            req.abort();
-            resolve();
-        });
-        req.on('timeout', () => {
-            clearTimeout(timeoutId);
-            req.abort();
-            resolve();
-        });
-        req.end();
-    });
-};
-
-//=========================================================================================
-
 const toMegabytes = (bytes) => {
     const mb = bytes / 1024 / 1024;
     return `${Math.round(mb * 10) / 10} Mb`;
@@ -105,33 +55,15 @@ const showProgress = (downloadedBytes, totalBytes) => {
     gauge.show(`Downloading Chromium - ${toMegabytes(downloadedBytes)} / ${toMegabytes(totalBytes)}`, per);
 };
 
-//=========================================================================================
-
-const archiveName = (platform, revision) => {
-    if (platform === 'linux') {
-        return 'chrome-linux';
-    }
-    if (platform === 'mac') {
-        return 'chrome-mac';
-    }
-    if (platform === 'win32' || platform === 'win64') {
-        // Windows archive name changed at r591479.
-        return parseInt(revision, 10) > 591479 ? 'chrome-win' : 'chrome-win32';
-    }
-    return null;
+const delay = async (ms) => {
+    return new Promise((resolve) => {
+        if (ms) {
+            setTimeout(resolve, ms);
+        } else {
+            setImmediate(resolve);
+        }
+    });
 };
-
-const getDownloadUrl = (browserFetcher, host, revision) => {
-    const downloadURLs = {
-        linux: '%s/chromium-browser-snapshots/Linux_x64/%d/%s.zip',
-        mac: '%s/chromium-browser-snapshots/Mac/%d/%s.zip',
-        win32: '%s/chromium-browser-snapshots/Win/%d/%s.zip',
-        win64: '%s/chromium-browser-snapshots/Win_x64/%d/%s.zip',
-    };
-    var platform = browserFetcher.platform();
-    return util.format(downloadURLs[platform], host, revision, archiveName(platform, revision));
-};
-
 
 //=========================================================================================
 
@@ -174,14 +106,6 @@ const downloadFromHost = async (option) => {
         host: option.host,
         path: option.userFolder
     });
-    //try url if is valid in 5000ms
-    var downloadUrl = getDownloadUrl(browserFetcher, option.host, option.revision);
-    var res = await tryRequest(downloadUrl, 'GET', 5000).catch((e) => {
-        output(e);
-    });
-    if (!res) {
-        return false;
-    }
     //download start now
     return await downloadNow(option, browserFetcher);
 };
@@ -205,6 +129,72 @@ const downloadStart = async (option) => {
     return false;
 };
 
+const pingHost = function (host, timeout = 5000) {
+    return new Promise((resolve) => {
+        const myMonitor = new PingMonitor({
+            website: host
+        });
+        let time_start = Date.now();
+        let timeout_id = setTimeout(() => {
+            myMonitor.stop();
+            resolve({
+                host: host,
+                time: timeout,
+                isUp: 0
+            });
+        }, timeout);
+        myMonitor.on('up', function (res, state) {
+            clearTimeout(timeout_id);
+            myMonitor.stop();
+            resolve({
+                host: host,
+                time: res.time,
+                isUp: 1
+            });
+        });
+        myMonitor.on('down', function (res) {
+            clearTimeout(timeout_id);
+            myMonitor.stop();
+            resolve({
+                host: host,
+                time: res.time,
+                isUp: 0
+            });
+        });
+        myMonitor.on('error', function (error) {
+            clearTimeout(timeout_id);
+            myMonitor.stop();
+            resolve({
+                host: host,
+                time: Date.now() - time_start,
+                isUp: 0
+            });
+        });
+    });
+};
+
+const sortHosts = async (hosts) => {
+    if (hosts.length < 2) {
+        return hosts;
+    }
+
+    const list = [];
+    for (const host of hosts) {
+        const info = await pingHost(host);
+        list.push(info);
+    }
+    //console.log(list);
+    list.sort((a, b) => {
+        if (a.isUp === b.isUp) {
+            return a.time - b.time;
+        }
+        return b.isUp - a.isUp;
+    });
+    //console.log(list);
+    hosts = list.map(item => item.host);
+    return hosts;
+};
+
 const downloadHandler = async (option) => {
     // //Not found, try to download to user folder
     option.revisionInfo = option.userRevisionInfo;
@@ -212,8 +202,11 @@ const downloadHandler = async (option) => {
     if (!hosts || !hosts.length) {
         hosts = option.defaultHosts;
     }
+
+    hosts = await sortHosts(hosts);
     option.hosts = hosts;
     option.retryTimes = 0;
+
     let res = await downloadStart(option);
     if (!res) {
         output(`ERROR: Failed to download Chromium after retry ${option.retryTimes} times.`, true);
@@ -347,12 +340,15 @@ const launchHandler = async (option) => {
         args: ['--no-sandbox'],
         executablePath: option.revisionInfo.executablePath
     }).catch((error) => {
-        output(error, true);
+        //output(error, true);
+        console.log(error);
     });
+    await delay(100);
     if (browser) {
         option.launchable = true;
         option.chromiumVersion = await browser.version();
         browser.close();
+        await delay(100);
     }
 };
 
@@ -406,6 +402,7 @@ const resolver = async (option = {}) => {
     option.revision = initRevision(option);
     output("Chromium revision: " + option.revision);
     option.userFolder = initUserFolder(option);
+    //output("User folder: " + option.userFolder);
 
     let localChromium = detectionLocalChromium(option);
     if (!localChromium) {
