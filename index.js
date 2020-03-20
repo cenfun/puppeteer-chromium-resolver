@@ -48,28 +48,18 @@ const toMegabytes = (bytes) => {
 };
 
 const showProgress = (downloadedBytes, totalBytes) => {
-    var per = 0;
+    let per = 0;
     if (totalBytes) {
         per = downloadedBytes / totalBytes;
     }
     gauge.show(`Downloading Chromium - ${toMegabytes(downloadedBytes)} / ${toMegabytes(totalBytes)}`, per);
 };
 
-const delay = async (ms) => {
-    return new Promise((resolve) => {
-        if (ms) {
-            setTimeout(resolve, ms);
-        } else {
-            setImmediate(resolve);
-        }
-    });
-};
-
 //=========================================================================================
 
 const downloadNow = async (option, browserFetcher) => {
 
-    var downloading = false;
+    let downloading = false;
     await browserFetcher.download(option.revision, (downloadedBytes, totalBytes) => {
         downloading = true;
         showProgress(downloadedBytes, totalBytes);
@@ -83,7 +73,7 @@ const downloadNow = async (option, browserFetcher) => {
 
     output('Chromium downloaded to ' + option.userFolder);
 
-    var localRevisions = await browserFetcher.localRevisions();
+    let localRevisions = await browserFetcher.localRevisions();
     if (localRevisions && localRevisions.length) {
         output('Checking previous local chromium revisions ...');
         localRevisions = localRevisions.filter(revision => revision !== option.revision);
@@ -198,7 +188,7 @@ const sortHosts = async (hosts) => {
 const downloadHandler = async (option) => {
     // //Not found, try to download to user folder
     option.revisionInfo = option.userRevisionInfo;
-    var hosts = option.hosts;
+    let hosts = option.hosts;
     if (!hosts || !hosts.length) {
         hosts = option.defaultHosts;
     }
@@ -216,7 +206,7 @@ const downloadHandler = async (option) => {
 //=========================================================================================
 
 const getDetectionPath = (option) => {
-    var detectionPath = option.detectionPath;
+    let detectionPath = option.detectionPath;
     if (Array.isArray(detectionPath)) {
         return detectionPath;
     }
@@ -229,17 +219,17 @@ const getDetectionPath = (option) => {
 
 const initDetectionList = (option) => {
     //from user custom
-    var detectionList = getDetectionPath(option);
+    const detectionList = getDetectionPath(option);
     //from user folder
     detectionList.push(option.userFolder);
     //from current folder and up 5 level folder
-    var folderName = option.folderName;
-    var level = 0;
-    var maxLevel = 5;
-    var current = process.cwd();
+    const folderName = option.folderName;
+    const maxLevel = 5;
+    let level = 0;
+    let current = process.cwd();
     while (current && level < maxLevel) {
         detectionList.push(path.resolve(current, folderName));
-        var parent = path.resolve(current, "../");
+        let parent = path.resolve(current, "../");
         if (parent === current) {
             current = "";
         } else {
@@ -276,7 +266,7 @@ const detectionHandler = (option) => {
 const detectionLocalChromium = (option) => {
     option.detectionList = initDetectionList(option);
     //output(detectionList.join("\n"));
-    var revisionInfo = detectionHandler(option);
+    const revisionInfo = detectionHandler(option);
     if (revisionInfo) {
         option.revisionInfo = revisionInfo;
         output("Detected local chromium is already downloaded");
@@ -289,8 +279,8 @@ const detectionLocalChromium = (option) => {
 //=========================================================================================
 
 const initUserFolder = (option) => {
-    var homePath = os.homedir();
-    var userFolder = path.resolve(homePath, option.folderName);
+    const homePath = os.homedir();
+    const userFolder = path.resolve(homePath, option.folderName);
     if (fs.existsSync(userFolder)) {
         return userFolder;
     }
@@ -320,11 +310,11 @@ const initPuppeteerConf = (option) => {
     if (option.puppeteerConf) {
         return option.puppeteerConf;
     }
-    var p1 = path.resolve(__dirname, "../puppeteer-core/package.json");
+    const p1 = path.resolve(__dirname, "../puppeteer-core/package.json");
     if (fs.existsSync(p1)) {
         return require(p1);
     }
-    var p2 = path.resolve(__dirname, "./node_modules/puppeteer-core/package.json");
+    const p2 = path.resolve(__dirname, "./node_modules/puppeteer-core/package.json");
     if (fs.existsSync(p2)) {
         return require(p2);
     }
@@ -335,7 +325,7 @@ const initPuppeteerConf = (option) => {
 
 const launchHandler = async (option) => {
     option.launchable = false;
-    var browser = await puppeteer.launch({
+    const browser = await puppeteer.launch({
         //fix root issue
         args: ['--no-sandbox'],
         executablePath: option.revisionInfo.executablePath
@@ -343,12 +333,13 @@ const launchHandler = async (option) => {
         //output(error, true);
         console.log(error);
     });
-    await delay(100);
     if (browser) {
         option.launchable = true;
         option.chromiumVersion = await browser.version();
-        browser.close();
-        await delay(100);
+        //delay close, fix unknown log in console
+        setTimeout(function () {
+            browser.close();
+        }, 1000);
     }
 };
 
@@ -360,7 +351,7 @@ const revisionHandler = (option) => {
     //Chromium
     revisionInfo.launchable = option.launchable;
     revisionInfo.chromiumVersion = option.chromiumVersion;
-    var launchable = Color.red("false");
+    let launchable = Color.red("false");
     if (revisionInfo.launchable) {
         launchable = Color.green("true");
         output("Chromium executablePath: " + revisionInfo.executablePath);
