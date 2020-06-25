@@ -61,8 +61,11 @@ const pcr = await PCR({
 
 ## CHANGELOG
 
++ v4.0.0
+  - updated puppeteer-core to v4
+
 + v3.2.0
-  - update puppeteer-core to v3
+  - updated puppeteer-core to v3
 
 + v3.1.0
   - updated puppeteer-core version to 2.1.1
