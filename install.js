@@ -1,3 +1,3 @@
-require("./index.js")({}).then((pcr) => {
-    //console.log(pcr);
+require("./index.js").PCR({}).then((pcr) => {
+    // console.log(pcr);
 });

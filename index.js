@@ -1,5 +1,9 @@
 const Resolver = require("./resolver");
-const puppeteer = require('puppeteer-core');
+const originalPuppeteer = require('puppeteer-core');
+
+// We extend the original puppeteer object.
+// We don't want to modify the original, since resolver.js relies on it.
+const puppeteer = Object.create(originalPuppeteer);
 
 // Allow calling code to access the resolver if they need to.
 puppeteer.PCR = Resolver;
@@ -31,8 +35,8 @@ function injectExecutablePath(originalFunc) {
 
 // Make sure that the launch and connect functions always use the executablePath
 // from our module if not set upstream.
-puppeteer.launch = injectExecutablePath(puppeteer.launch);
-puppeteer.connect = injectExecutablePath(puppeteer.connect);
+puppeteer.launch = injectExecutablePath(originalPuppeteer.launch);
+puppeteer.connect = injectExecutablePath(originalPuppeteer.connect);
 
 // Use the puppeteer object directly, so that our module can serve as a drop-in
 // replacement for puppeteer.
