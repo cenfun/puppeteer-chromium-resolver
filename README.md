@@ -13,6 +13,9 @@
 * Try launching chromium and resolve launchable and version
 * Resolve chromium executablePath and puppeteer
 
+## Why this tool?
+
+
 ## Install 
 ```sh
 npm install puppeteer-chromium-resolver --save
@@ -58,6 +61,27 @@ const pcr = await PCR({
 |chromiumVersion | String  |chromium version          |
 |puppeteer       | Object  |puppeteer module          |
 |puppeteerVersion| String  |puppeteer version         |
+
+
+## How to replace puppeteer with puppeteer-chromium-resolver
+* add config "puppeteer_skip_download = true" to .npmrc
+* set env PUPPETEER_EXECUTABLE_PATH to PCR executablePath
+```js
+const PCR = require("puppeteer-chromium-resolver");
+const puppeteer = require("puppeteer");
+const main = async()=>{
+    const pcr = await PCR();
+    process.env.PUPPETEER_EXECUTABLE_PATH = pcr.executablePath
+    const browser = await puppeteer.launch({
+        headless: false
+    });
+    const page = await browser.newPage();
+    await page.goto('https://github.com');
+    await browser.close();
+}
+main();
+```
+
 
 ## CHANGELOG
 
