@@ -61,9 +61,9 @@ const pcr = await PCR({
 |puppeteerVersion| String  |puppeteer version         |
 
 
-## How to replace puppeteer with puppeteer-chromium-resolver
-* add config "puppeteer_skip_download = true" to .npmrc
-* set env PUPPETEER_EXECUTABLE_PATH to PCR executablePath
+## How to make puppeteer work with puppeteer-chromium-resolver
+* 1, prevent the automatic download of Chromium: add config "puppeteer_skip_download = true" to .npmrc (or yarn config)
+* 2, set env PUPPETEER_EXECUTABLE_PATH to PCR executablePath before calling puppeteer.launch()
 ```js
 const PCR = require("puppeteer-chromium-resolver");
 const puppeteer = require("puppeteer");
