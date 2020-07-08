@@ -13,8 +13,6 @@
 * Try launching chromium and resolve launchable and version
 * Resolve chromium executablePath and puppeteer
 
-## Why this tool?
-
 
 ## Install 
 ```sh
