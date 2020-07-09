@@ -19,19 +19,48 @@
 npm install puppeteer-chromium-resolver --save
 ```
 ## Usage
+
+#### [Async Case](./test/async.js): dynamic detection and downloading chromium
 ```js
-const PCR = require("puppeteer-chromium-resolver");
-const pcr = await PCR();
-const browser = await pcr.puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox'],
-    executablePath: pcr.executablePath
-}).catch(function (error) {
-    console.log(error);
-});
-const page = await browser.newPage();
-await page.goto('https://www.google.com');
-await browser.close();
+(async () => {
+
+    const PCR = require("puppeteer-chromium-resolver");
+    const pcr = await PCR();
+    const browser = await pcr.puppeteer.launch({
+        headless: false,
+        args: ["--no-sandbox"],
+        executablePath: pcr.executablePath
+    }).catch(function(error) {
+        console.log(error);
+    });
+    const page = await browser.newPage();
+    await page.goto("https://www.npmjs.com/package/puppeteer-chromium-resolver");
+    await browser.close();
+
+})();
+```
+#### [Sync Case](./test/sync.js): chromium pre-downloaded when installation, just call API PCR.getStats() 
+```js
+(async () => {
+
+    const PCR = require("puppeteer-chromium-resolver");
+    const pcr = PCR.getStats();
+    if (!pcr) {
+        console.log("Not found PCR stats, try install again.");
+        return;
+    }
+    const browser = await pcr.puppeteer.launch({
+        headless: false,
+        args: ["--no-sandbox"],
+        executablePath: pcr.executablePath
+    }).catch(function(error) {
+        console.log(error);
+    });
+    const page = await browser.newPage();
+    await page.goto("https://www.npmjs.com/package/puppeteer-chromium-resolver");
+    await browser.close();
+
+})();
 ```
 
 ## Option
@@ -57,31 +86,37 @@ const pcr = await PCR({
 |url             | String  |chromium download url     |
 |launchable      | Boolean |chromium launchable       |
 |chromiumVersion | String  |chromium version          |
-|puppeteer       | Object  |puppeteer module          |
 |puppeteerVersion| String  |puppeteer version         |
+|puppeteer       | Object  |puppeteer module          |
 
 
 ## How to make puppeteer work with puppeteer-chromium-resolver
-* 1, prevent the automatic download of Chromium: add config "puppeteer_skip_download = true" to .npmrc (or yarn config)
+* 1, prevent the automatic download of Chromium: add "puppeteer_skip_download = true" to .npmrc (or npm/yarn config)
 * 2, set env PUPPETEER_EXECUTABLE_PATH to PCR executablePath before calling puppeteer.launch()
 ```js
-const PCR = require("puppeteer-chromium-resolver");
-const puppeteer = require("puppeteer");
-const main = async()=>{
-    const pcr = await PCR();
+(async () => {
+
+    const PCR = require("puppeteer-chromium-resolver");
+    const puppeteer = require("puppeteer");
+    const pcr = PCR.getStats();
     process.env.PUPPETEER_EXECUTABLE_PATH = pcr.executablePath
+
     const browser = await puppeteer.launch({
         headless: false
     });
     const page = await browser.newPage();
     await page.goto('https://github.com');
     await browser.close();
-}
-main();
+
+})();
 ```
 
 
 ## CHANGELOG
+
++ v5.0.0
+  - updated puppeteer-core to v5
+  - added sync API getStats()
 
 + v4.0.0
   - updated puppeteer-core to v4

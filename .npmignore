@@ -5,3 +5,4 @@ node_modules/
 .eslintrc.js
 .gitignore
 .jsbeautifyrc
+/test
