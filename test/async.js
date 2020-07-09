@@ -1,11 +1,11 @@
 (async () => {
 
     const PCR = require("../index.js");
-    const pcr = await PCR();
-    const browser = await pcr.puppeteer.launch({
+    const stats = await PCR();
+    const browser = await stats.puppeteer.launch({
         headless: false,
         args: ["--no-sandbox"],
-        executablePath: pcr.executablePath
+        executablePath: stats.executablePath
     }).catch(function(error) {
         console.log(error);
     });

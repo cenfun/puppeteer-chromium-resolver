@@ -25,11 +25,11 @@ npm install puppeteer-chromium-resolver --save
 (async () => {
 
     const PCR = require("puppeteer-chromium-resolver");
-    const pcr = await PCR();
-    const browser = await pcr.puppeteer.launch({
+    const stats = await PCR();
+    const browser = await stats.puppeteer.launch({
         headless: false,
         args: ["--no-sandbox"],
-        executablePath: pcr.executablePath
+        executablePath: stats.executablePath
     }).catch(function(error) {
         console.log(error);
     });
@@ -44,15 +44,15 @@ npm install puppeteer-chromium-resolver --save
 (async () => {
 
     const PCR = require("puppeteer-chromium-resolver");
-    const pcr = PCR.getStats();
-    if (!pcr) {
-        console.log("Not found PCR stats, try install again.");
+    const stats = PCR.getStats();
+    if (!stats) {
+        console.log("Not found PCR stats, try npm install again.");
         return;
     }
-    const browser = await pcr.puppeteer.launch({
+    const browser = await stats.puppeteer.launch({
         headless: false,
         args: ["--no-sandbox"],
-        executablePath: pcr.executablePath
+        executablePath: stats.executablePath
     }).catch(function(error) {
         console.log(error);
     });
@@ -65,7 +65,7 @@ npm install puppeteer-chromium-resolver --save
 
 ## Option
 ```js
-const pcr = await PCR({
+const stats = await PCR({
     revision: "",
     detectionPath: "",
     folderName: '.chromium-browser-snapshots',
@@ -76,7 +76,7 @@ const pcr = await PCR({
 });
 ```
 
-## Properties
+## Return Stats
 |Property        | Type    |                          |
 | :--------------| :------ | :----------------------  |
 |revision        | String  |current chromium revision |
@@ -98,8 +98,8 @@ const pcr = await PCR({
 
     const PCR = require("puppeteer-chromium-resolver");
     const puppeteer = require("puppeteer");
-    const pcr = PCR.getStats();
-    process.env.PUPPETEER_EXECUTABLE_PATH = pcr.executablePath
+    const stats = PCR.getStats();
+    process.env.PUPPETEER_EXECUTABLE_PATH = stats.executablePath
 
     const browser = await puppeteer.launch({
         headless: false

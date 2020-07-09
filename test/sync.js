@@ -1,15 +1,15 @@
 (async () => {
 
     const PCR = require("../index.js");
-    const pcr = PCR.getStats();
-    if (!pcr) {
+    const stats = PCR.getStats();
+    if (!stats) {
         console.log("Not found PCR stats, try install again.");
         return;
     }
-    const browser = await pcr.puppeteer.launch({
+    const browser = await stats.puppeteer.launch({
         headless: false,
         args: ["--no-sandbox"],
-        executablePath: pcr.executablePath
+        executablePath: stats.executablePath
     }).catch(function(error) {
         console.log(error);
     });
