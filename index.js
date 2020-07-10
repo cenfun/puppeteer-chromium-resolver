@@ -383,18 +383,21 @@ const revisionHandler = (option) => {
     return revisionInfo;
 };
 
-const statsPath = "./.stats.json";
+const statsPath = path.resolve(__dirname, ".stats.json");
 const saveStats = (revisionInfo) => {
     const stats = Object.assign({}, revisionInfo);
     delete stats.puppeteer;
     fs.writeFileSync(statsPath, JSON.stringify(stats, null, 4));
+    output("Stats saved: " + path.relative(process.cwd(), statsPath));
 };
 
 const getStats = () => {
     let stats;
     try {
         stats = require(statsPath);
-    } catch (e) {}
+    } catch (e) {
+        output("Not found PCR stats, try npm install again.", true);
+    }
     if (stats) {
         stats.puppeteer = puppeteer;
     }

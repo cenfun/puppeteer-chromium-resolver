@@ -3,7 +3,6 @@
     const PCR = require("../index.js");
     const stats = PCR.getStats();
     if (!stats) {
-        console.log("Not found PCR stats, try install again.");
         return;
     }
     const browser = await stats.puppeteer.launch({

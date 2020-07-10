@@ -46,7 +46,6 @@ npm install puppeteer-chromium-resolver --save
     const PCR = require("puppeteer-chromium-resolver");
     const stats = PCR.getStats();
     if (!stats) {
-        console.log("Not found PCR stats, try npm install again.");
         return;
     }
     const browser = await stats.puppeteer.launch({
