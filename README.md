@@ -91,7 +91,13 @@ const stats = await PCR({
 
 
 ## How to make puppeteer work with puppeteer-chromium-resolver
-* 1, prevent the automatic download of Chromium: add "puppeteer_skip_download = true" to .npmrc (or npm/yarn config)
+* 1, stop the automatic download of Chromium with config in .npmrc 
+```
+puppeteer_skip_download = true
+PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true
+```
+(PUPPETEER_SKIP_CHROMIUM_DOWNLOAD for puppeteer version 2.x)
+
 * 2, set env PUPPETEER_EXECUTABLE_PATH to PCR executablePath before calling puppeteer.launch()
 ```js
 (async () => {
