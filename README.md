@@ -20,7 +20,7 @@ npm install puppeteer-chromium-resolver --save
 ```
 ## Usage
 
-#### [Async Case](./test/async.js): dynamic detection and downloading chromium
+### [Async Case](./test/async.js): dynamic detection and downloading chromium
 ```js
 (async () => {
 
@@ -39,7 +39,21 @@ npm install puppeteer-chromium-resolver --save
 
 })();
 ```
-#### [Sync Case](./test/sync.js): chromium pre-downloaded when installation, just call API PCR.getStats() 
+#### Option
+```js
+const stats = await PCR({
+    revision: "",
+    detectionPath: "",
+    folderName: '.chromium-browser-snapshots',
+    hosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
+    cacheRevisions: 2,
+    retry: 3,
+    silent: false
+});
+```
+
+
+### [Sync Case](./test/sync.js): chromium pre-downloaded when installation, just call API PCR.getStats() 
 ```js
 (async () => {
 
@@ -62,19 +76,6 @@ npm install puppeteer-chromium-resolver --save
 })();
 ```
 
-## Option
-```js
-const stats = await PCR({
-    revision: "",
-    detectionPath: "",
-    folderName: '.chromium-browser-snapshots',
-    hosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
-    cacheRevisions: 2,
-    retry: 3,
-    silent: false
-});
-```
-
 ## Return Stats
 |Property        | Type    |                          |
 | :--------------| :------ | :----------------------  |
@@ -89,24 +90,26 @@ const stats = await PCR({
 |puppeteer       | Object  |puppeteer module          |
 
 
-## How to make puppeteer work with puppeteer-chromium-resolver
+### How to make puppeteer work with puppeteer-chromium-resolver
 * 1, stop the automatic download of Chromium with config in .npmrc 
 ```
 puppeteer_skip_download = true
 PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true
 ```
-(PUPPETEER_SKIP_CHROMIUM_DOWNLOAD for puppeteer version 2.x)
+(one more setting for puppeteer v2.x)
 
-* 2, set env PUPPETEER_EXECUTABLE_PATH to PCR executablePath before calling puppeteer.launch()
+* 2, set env PUPPETEER_EXECUTABLE_PATH to PCR executablePath before calling puppeteer.launch() or use launch option executablePath
 ```js
 (async () => {
 
     const PCR = require("puppeteer-chromium-resolver");
     const puppeteer = require("puppeteer");
-    const stats = PCR.getStats();
-    process.env.PUPPETEER_EXECUTABLE_PATH = stats.executablePath
+    const stats = PCR.getStats(); //or await PCR();
+    //process global setting
+    process.env.PUPPETEER_EXECUTABLE_PATH = stats.executablePath;
 
     const browser = await puppeteer.launch({
+        //or executablePath: stats.executablePath,
         headless: false
     });
     const page = await browser.newPage();
