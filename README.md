@@ -122,6 +122,9 @@ PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true
 
 ## CHANGELOG
 
++ v5.2.0
+  - updated puppeteer-core to v5.2.1
+
 + v5.0.1
   - updated puppeteer-core to v5
   - added sync API getStats()

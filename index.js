@@ -302,13 +302,13 @@ const initRevision = (option) => {
     }
     let revisions;
     try {
-        revisions = require("puppeteer-core/lib/cjs/revisions.js");
+        revisions = require("puppeteer-core/lib/cjs/puppeteer/revisions.js");
     } catch (e) {}
     //console.log(revisions);
     if (revisions) {
         return revisions.PUPPETEER_REVISIONS.chromium;
     }
-    return "756035";
+    return "782078";
 };
 
 const initPuppeteerConf = (option) => {
