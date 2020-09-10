@@ -1,6 +1,6 @@
 (async () => {
 
-    const PCR = require("../index.js");
+    const PCR = require("../resolver.js");
     const stats = PCR.getStats();
     if (!stats) {
         return;

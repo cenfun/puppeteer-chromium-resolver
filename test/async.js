@@ -1,6 +1,6 @@
 (async () => {
 
-    const PCR = require("../index.js");
+    const PCR = require("../resolver.js");
     const stats = await PCR();
     const browser = await stats.puppeteer.launch({
         headless: false,
