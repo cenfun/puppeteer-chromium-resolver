@@ -122,6 +122,9 @@ PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true
 
 ## CHANGELOG
 
++ v7.0.0
+  - updated puppeteer-core to v7.1.0
+
 + v5.2.0
   - updated puppeteer-core to v5.2.1
 
