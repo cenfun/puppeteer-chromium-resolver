@@ -120,7 +120,8 @@ PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true
 ```
 
 
-## CHANGELOG
+## CHANGELOG 
+> major version following puppeteer-core
 
 + v7.0.0
   - updated puppeteer-core to v7.1.0
