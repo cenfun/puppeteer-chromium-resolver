@@ -1,6 +1,6 @@
 {
   "name": "puppeteer-chromium-resolver",
-  "version": "7.0.0",
+  "version": "8.0.0",
   "description": "Tool to resolve puppeteer and chromium faster, detect local installed chromium, download chromium with custom mirror host, cache chromium revision out of node_modules, test chromium headless being launchable.",
   "main": "index.js",
   "files": [
@@ -11,7 +11,7 @@
     "gauge": "^3.0.0",
     "object-assign": "^4.1.1",
     "ping-monitor": "^0.6.1",
-    "puppeteer-core": "^7.1.0"
+    "puppeteer-core": "^8.0.0"
   },
   "repository": {
     "type": "git",

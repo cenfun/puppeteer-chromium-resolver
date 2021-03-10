@@ -76,6 +76,26 @@ const stats = await PCR({
 })();
 ```
 
+### [Runtime Case]
+```js
+(async () => {
+
+    const fs = require("fs");
+    const PCR = require("puppeteer-chromium-resolver");
+
+    const getPCRStats = () => {
+        const stats = PCR.getStats();
+        if (fs.existsSync(stats.executablePath)) {
+            return stats;
+        }
+        return PCR();
+    },
+
+    const stats = await getPCRStats();
+
+})();
+```
+
 ## Return Stats
 |Property        | Type    |                          |
 | :--------------| :------ | :----------------------  |
@@ -122,6 +142,9 @@ PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true
 
 ## CHANGELOG 
 > major version following puppeteer-core
+
++ v8.0.0
+  - updated puppeteer-core to v8.0.0
 
 + v7.0.0
   - updated puppeteer-core to v7.1.0
