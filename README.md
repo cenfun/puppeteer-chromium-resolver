@@ -47,7 +47,7 @@ npm install puppeteer-chromium-resolver --save
 })();
 ```
 
-### [Sync] chromium will be pre-downloaded when PCR installation, so calling getStatsSync() will get PCR stats from previous installation.
+### [Sync] chromium will be pre-downloaded when PCR installation, so calling getStats() will get PCR stats from previous installation.
 ```js
 const PCR = require("puppeteer-chromium-resolver");
 const stats = PCR.getStats();
@@ -67,8 +67,8 @@ if (stats) {
 ### Option from root package.json with "pcr" object
 ```json
 {
-    "name": "xxx",
-    "version": "xxx",
+    "name": "",
+    "version": "",
     "dependencies": {},
 
     "pcr": {
@@ -106,17 +106,15 @@ PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true
 
     const PCR = require("puppeteer-chromium-resolver");
     const puppeteer = require("puppeteer");
-    const stats = PCR.getStats(); //or await PCR();
-    //process global setting
+    const stats = await PCR();
+    //update global env
     process.env.PUPPETEER_EXECUTABLE_PATH = stats.executablePath;
 
+    //or specify executablePath
     const browser = await puppeteer.launch({
-        //or executablePath: stats.executablePath,
+        executablePath: stats.executablePath,
         headless: false
     });
-    const page = await browser.newPage();
-    await page.goto('https://github.com');
-    await browser.close();
 
 })();
 ```
