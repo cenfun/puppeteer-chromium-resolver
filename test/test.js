@@ -14,7 +14,7 @@ const caseWithCache = async () => {
     console.log("case with cache ...");
     
     const option = {};
-    const stats = await PCR.get(option);
+    const stats = await PCR(option);
     return stats;
 };
 
@@ -27,7 +27,7 @@ const caseWithoutCache = async () => {
         fs.rmSync(cachePath);
     }
     const option = {};
-    const stats = await PCR.get(option);
+    const stats = await PCR(option);
     return stats;
 };
 
@@ -60,7 +60,7 @@ const caseWithReinstall = async () => {
     }
 
     const option = {};
-    const stats = await PCR.get(option);
+    const stats = await PCR(option);
     return stats;
 };
 

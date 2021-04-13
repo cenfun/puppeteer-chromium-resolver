@@ -334,6 +334,25 @@ const getOptionFromPackage = () => {
     return config.pcr;
 };
 
+const getOption = (option) => {
+    const defaultOption = {
+        revision: "",
+        detectionPath: "",
+        folderName: ".chromium-browser-snapshots",
+        defaultHosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
+        hosts: [],
+        cacheRevisions: 2,
+        retry: 3,
+        silent: false
+    };
+
+    const optionFromPackage = getOptionFromPackage();
+
+    option = Object.assign(defaultOption, optionFromPackage, option);
+
+    return option;
+};
+
 //=========================================================================================
 
 const launchHandler = async (option) => {
@@ -409,22 +428,32 @@ const saveStats = (revisionInfo) => {
     output(`Stats saved: ${path.relative(process.cwd(), statsPath)}`);
 };
 
+const getStats = (silent) => {
+    let stats;
+    try {
+        stats = require(statsPath);
+    } catch (e) {
+        if (!silent) {
+            output("Not found PCR stats cache, try npm install again.", true);
+        }
+    }
+    if (stats) {
+        stats.puppeteer = puppeteer;
+    }
+    return stats;
+};
+
 const PCR = async (option = {}) => {
 
-    const defaultOption = {
-        revision: "",
-        detectionPath: "",
-        folderName: ".chromium-browser-snapshots",
-        defaultHosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
-        hosts: [],
-        cacheRevisions: 2,
-        retry: 3,
-        silent: false
-    };
+    option = getOption(option);
 
-    const optionFromPackage = getOptionFromPackage();
-
-    option = Object.assign(defaultOption, optionFromPackage, option);
+    //from stats cache
+    const stats = getStats(true);
+    if (stats && fs.existsSync(stats.executablePath)) {
+        if (!option.revision || (option.revision && option.revision === stats.revision)) {
+            return stats;
+        }
+    }
 
     outputSilent = option.silent;
 
@@ -451,30 +480,6 @@ const PCR = async (option = {}) => {
     return revisionInfo;
 };
 
-const getStats = (silent) => {
-    let stats;
-    try {
-        stats = require(statsPath);
-    } catch (e) {
-        if (!silent) {
-            output("Not found PCR stats cache, try npm install again.", true);
-        }
-    }
-    if (stats) {
-        stats.puppeteer = puppeteer;
-    }
-    return stats;
-};
-
-PCR.get = (option) => {
-    const stats = getStats(true);
-    if (stats && fs.existsSync(stats.executablePath)) {
-        return stats;
-    }
-    return PCR(option);
-};
-
-//sync API
 PCR.getStats = getStats;
 
 module.exports = PCR;

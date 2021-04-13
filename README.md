@@ -33,7 +33,7 @@ npm install puppeteer-chromium-resolver --save
         retry: 3,
         silent: false
     };
-    const stats = await PCR.get(option);
+    const stats = await PCR(option);
     const browser = await stats.puppeteer.launch({
         headless: false,
         args: ["--no-sandbox"],
@@ -47,7 +47,7 @@ npm install puppeteer-chromium-resolver --save
 })();
 ```
 
-### [Sync] chromium will be pre-downloaded when PCR installation, so calling getStats() API will get PCR stats from previous installation cache.
+### [Sync] chromium will be pre-downloaded when PCR installation, so calling getStatsSync() will get PCR stats from previous installation.
 ```js
 const PCR = require("puppeteer-chromium-resolver");
 const stats = PCR.getStats();
@@ -125,9 +125,9 @@ PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true
 ## CHANGELOG 
 > major version following puppeteer-core
 
-+ v8.1.0
++ v8.1.1
   - supported reading option from root package.json with "pcr" object
-  - replaced PCR(option) with API PCR.get(option)
+  - updated PCR(option) API to support using stats cache
 
 + v8.0.0
   - updated puppeteer-core to v8.0.0
