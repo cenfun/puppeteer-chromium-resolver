@@ -51,7 +51,19 @@ const stats = await PCR({
     silent: false
 });
 ```
+#### Option from root package.json with "pcr" object
+```json
+{
+  "name": "xxx",
+  "version": "xxx",
+  "dependencies": {},
 
+  "pcr": {
+    "revision": "818858"
+  }
+
+}
+```
 
 ### [Sync Case](./test/sync.js): chromium pre-downloaded when installation, just call API PCR.getStats() 
 ```js
@@ -142,6 +154,9 @@ PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true
 
 ## CHANGELOG 
 > major version following puppeteer-core
+
++ v8.0.1
+  - supported reading option from root package.json with "pcr" object
 
 + v8.0.0
   - updated puppeteer-core to v8.0.0

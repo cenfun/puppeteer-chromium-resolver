@@ -1,6 +1,6 @@
 {
   "name": "puppeteer-chromium-resolver",
-  "version": "8.0.0",
+  "version": "8.0.1",
   "description": "Tool to resolve puppeteer and chromium faster, detect local installed chromium, download chromium with custom mirror host, cache chromium revision out of node_modules, test chromium headless being launchable.",
   "main": "index.js",
   "files": [
@@ -19,5 +19,8 @@
   },
   "scripts": {
     "install": "node install.js"
+  },
+  "devDependencies": {
+    "eslint": "^7.24.0"
   }
 }

@@ -1,4 +1,5 @@
 module.exports = {
+    "root": true,
     //system globals
     "env": {
         "node": true,
@@ -21,8 +22,6 @@ module.exports = {
     "plugins": [
         //"es"
     ],
-
-    "root": true,
 
     "parserOptions": {
         //set to 3, 5 (default), 6, 7, 8, 9, or 10 to specify the version of ECMAScript syntax you want to use. 
@@ -80,8 +79,8 @@ module.exports = {
         "max-params": ["error", 8],
         "max-statements": ["error", 50],
         "new-cap": ["error", {
-            "newIsCap": true,
             "capIsNew": false,
+            "newIsCap": true,
             "properties": true
         }],
         "no-alert": "error",
@@ -113,7 +112,7 @@ module.exports = {
         "no-prototype-builtins": "off",
         "no-restricted-globals": ["error", "event", "fdescribe"],
         "no-return-assign": "warn",
-        //"no-return-await": "warn",
+        "no-return-await": "warn",
         "no-sequences": "error",
         "no-trailing-spaces": ["error", {
             "ignoreComments": true,
@@ -138,6 +137,7 @@ module.exports = {
                 "multiline": true
             },
             "ObjectExpression": {
+                "consistent": true,
                 "minProperties": 1,
                 "multiline": true
             },
@@ -170,12 +170,12 @@ module.exports = {
             "prev": "*"
         }],
         "prefer-const": "error",
-        //"prefer-template": "error",
+        "prefer-template": "error",
         "quotes": ["error", "double", {
             "avoidEscape": true
         }],
         "require-atomic-updates": "off",
-        //"require-await": "error",
+        "require-await": "error",
         "rest-spread-spacing": ["error", "always"],
         "semi": ["error", "always"],
         "semi-spacing": ["error", {
@@ -185,8 +185,8 @@ module.exports = {
         "space-before-blocks": ["error", "always"],
         "space-before-function-paren": ["error", {
             "anonymous": "never",
-            "named": "never",
-            "asyncArrow": "always"
+            "asyncArrow": "always",
+            "named": "never"
         }],
         "space-in-parens": "error",
         "space-infix-ops": ["error", {
