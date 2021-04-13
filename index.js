@@ -370,9 +370,11 @@ const revisionHandler = (option) => {
     //Chromium
     revisionInfo.executablePath = formatPath(revisionInfo.executablePath);
     let executablePath = revisionInfo.executablePath;
-    executablePath = fs.existsSync(executablePath) ? Color.green(executablePath) : Color.red(executablePath);
-    output(`Chromium executablePath: ${executablePath}`);
-
+    if (executablePath) {
+        executablePath = fs.existsSync(executablePath) ? Color.green(executablePath) : Color.red(executablePath);
+        output(`Chromium executablePath: ${executablePath}`);
+    }
+    
     revisionInfo.folderPath = formatPath(revisionInfo.folderPath);
     revisionInfo.userFolder = formatPath(option.userFolder);
 
