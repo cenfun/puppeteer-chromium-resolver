@@ -1,7 +1,23 @@
+const fs = require("fs");
+const path = require("path");
+
 (async () => {
 
-    const PCR = require("../index.js");
-    const stats = await PCR();
+    console.log("test async ...");
+
+    //remove cache
+    const cachePath = path.resolve(__dirname, "../.stats.json");
+    if (fs.existsSync(cachePath)) {
+        console.log("remove stats cache ...");
+        fs.rmSync(cachePath);
+    }
+
+    const PCR = require(path.resolve(__dirname, "../index.js"));
+    const option = {};
+    const stats = await PCR.get(option);
+
+    console.log(stats);
+
     const browser = await stats.puppeteer.launch({
         headless: false,
         args: ["--no-sandbox"],

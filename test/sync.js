@@ -1,10 +1,17 @@
+const path = require("path");
+
 (async () => {
 
-    const PCR = require("../index.js");
+    console.log("test sync ...");
+
+    const PCR = require(path.resolve(__dirname, "../index.js"));
     const stats = PCR.getStats();
     if (!stats) {
         return;
     }
+
+    console.log(stats);
+
     const browser = await stats.puppeteer.launch({
         headless: false,
         args: ["--no-sandbox"],

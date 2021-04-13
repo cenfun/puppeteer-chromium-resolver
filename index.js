@@ -395,6 +395,8 @@ const revisionHandler = (option) => {
     return revisionInfo;
 };
 
+//=========================================================================================
+
 const statsPath = path.resolve(__dirname, ".stats.json");
 const saveStats = (revisionInfo) => {
     const stats = Object.assign({}, revisionInfo);
@@ -403,22 +405,7 @@ const saveStats = (revisionInfo) => {
     output(`Stats saved: ${path.relative(process.cwd(), statsPath)}`);
 };
 
-const getStats = () => {
-    let stats;
-    try {
-        stats = require(statsPath);
-    } catch (e) {
-        output("Not found PCR stats, try npm install again.", true);
-    }
-    if (stats) {
-        stats.puppeteer = puppeteer;
-    }
-    return stats;
-};
-
-//=========================================================================================
-
-const resolver = async (option = {}) => {
+const PCR = async (option = {}) => {
 
     const defaultOption = {
         revision: "",
@@ -461,7 +448,30 @@ const resolver = async (option = {}) => {
     return revisionInfo;
 };
 
-//sync API
-resolver.getStats = getStats;
+const getStats = (silent) => {
+    let stats;
+    try {
+        stats = require(statsPath);
+    } catch (e) {
+        if (!silent) {
+            output("Not found PCR stats cache, try npm install again.", true);
+        }
+    }
+    if (stats) {
+        stats.puppeteer = puppeteer;
+    }
+    return stats;
+};
 
-module.exports = resolver;
+PCR.get = (option) => {
+    const stats = getStats(true);
+    if (stats && fs.existsSync(stats.executablePath)) {
+        return stats;
+    }
+    return PCR(option);
+};
+
+//sync API
+PCR.getStats = getStats;
+
+module.exports = PCR;

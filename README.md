@@ -19,13 +19,21 @@
 npm install puppeteer-chromium-resolver --save
 ```
 ## Usage
-
 ### [Async Case](./test/async.js): dynamic detection and downloading chromium
 ```js
 (async () => {
-
     const PCR = require("puppeteer-chromium-resolver");
-    const stats = await PCR();
+    const option = {
+        revision: "",
+        detectionPath: "",
+        folderName: ".chromium-browser-snapshots",
+        defaultHosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
+        hosts: [],
+        cacheRevisions: 2,
+        retry: 3,
+        silent: false
+    };
+    const stats = await PCR.get(option);
     const browser = await stats.puppeteer.launch({
         headless: false,
         args: ["--no-sandbox"],
@@ -36,39 +44,12 @@ npm install puppeteer-chromium-resolver --save
     const page = await browser.newPage();
     await page.goto("https://www.npmjs.com/package/puppeteer-chromium-resolver");
     await browser.close();
-
 })();
 ```
-#### Option
-```js
-const stats = await PCR({
-    revision: "",
-    detectionPath: "",
-    folderName: '.chromium-browser-snapshots',
-    hosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
-    cacheRevisions: 2,
-    retry: 3,
-    silent: false
-});
-```
-#### Option from root package.json with "pcr" object
-```json
-{
-  "name": "xxx",
-  "version": "xxx",
-  "dependencies": {},
 
-  "pcr": {
-    "revision": "818858"
-  }
-
-}
-```
-
-### [Sync Case](./test/sync.js): chromium pre-downloaded when installation, just call API PCR.getStats() 
+### [Sync Case](./test/sync.js): chromium will be pre-downloaded when PCR installation, so calling getStats() API will get PCR stats from previous installation cache.
 ```js
 (async () => {
-
     const PCR = require("puppeteer-chromium-resolver");
     const stats = PCR.getStats();
     if (!stats) {
@@ -84,28 +65,21 @@ const stats = await PCR({
     const page = await browser.newPage();
     await page.goto("https://www.npmjs.com/package/puppeteer-chromium-resolver");
     await browser.close();
-
 })();
 ```
 
-### [Runtime Case]
-```js
-(async () => {
+### Option from root package.json with "pcr" object
+```json
+{
+    "name": "xxx",
+    "version": "xxx",
+    "dependencies": {},
 
-    const fs = require("fs");
-    const PCR = require("puppeteer-chromium-resolver");
+    "pcr": {
+        "revision": "818858"
+    }
 
-    const getPCRStats = () => {
-        const stats = PCR.getStats();
-        if (fs.existsSync(stats.executablePath)) {
-            return stats;
-        }
-        return PCR();
-    },
-
-    const stats = await getPCRStats();
-
-})();
+}
 ```
 
 ## Return Stats
@@ -157,6 +131,7 @@ PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true
 
 + v8.0.1
   - supported reading option from root package.json with "pcr" object
+  - replaced PCR(option) with API PCR.get(option)
 
 + v8.0.0
   - updated puppeteer-core to v8.0.0

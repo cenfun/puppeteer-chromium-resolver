@@ -18,7 +18,8 @@
     "url": "https://github.com/cenfun/puppeteer-chromium-resolver.git"
   },
   "scripts": {
-    "install": "node install.js"
+    "install": "node install.js",
+    "test": "node test/sync.js && node test/async.js"
   },
   "devDependencies": {
     "eslint": "^7.24.0"
