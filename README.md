@@ -49,21 +49,19 @@ npm install puppeteer-chromium-resolver --save
 
 ### [Sync] chromium will be pre-downloaded when PCR installation, so calling getStats() API will get PCR stats from previous installation cache.
 ```js
-(async () => {
-    const PCR = require("puppeteer-chromium-resolver");
-    const stats = PCR.getStats();
-    if (!stats) {
-        return;
-    }
-    const browser = await stats.puppeteer.launch({
+const PCR = require("puppeteer-chromium-resolver");
+const stats = PCR.getStats();
+if (stats) {
+    stats.puppeteer.launch({
         headless: false,
         args: ["--no-sandbox"],
         executablePath: stats.executablePath
+    }).then(function(browser){
+        //...
     }).catch(function(error) {
         console.log(error);
     });
-    ...
-})();
+}
 ```
 
 ### Option from root package.json with "pcr" object
