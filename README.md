@@ -125,7 +125,7 @@ PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true
 ## CHANGELOG 
 > major version following puppeteer-core
 
-+ v8.0.1
++ v8.1.0
   - supported reading option from root package.json with "pcr" object
   - replaced PCR(option) with API PCR.get(option)
 
