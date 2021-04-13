@@ -8,6 +8,7 @@
     "install.js"
   ],
   "dependencies": {
+    "eight-colors": "^1.0.0",
     "gauge": "^3.0.0",
     "object-assign": "^4.1.1",
     "ping-monitor": "^0.6.1",

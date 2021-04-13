@@ -1,17 +1,18 @@
 const fs = require("fs");
 const path = require("path");
+const EC = require("eight-colors");
 const puppeteer = require("puppeteer-core");
 const PCR = require(path.resolve(__dirname, "../index.js"));
 
 const caseWithSync = () => {
-    console.log("case with sync ...");
+    console.log(EC.magenta("sync case with cache ..."));
 
     const stats = PCR.getStats();
     return stats;
 };
 
 const caseWithCache = async () => {
-    console.log("case with cache ...");
+    console.log(EC.magenta("async case with cache ..."));
     
     const option = {};
     const stats = await PCR(option);
@@ -19,7 +20,7 @@ const caseWithCache = async () => {
 };
 
 const caseWithoutCache = async () => {
-    console.log("case without cache ...");
+    console.log(EC.magenta("async case without cache ..."));
     //remove cache
     const cachePath = path.resolve(__dirname, "../.stats.json");
     if (fs.existsSync(cachePath)) {
@@ -31,15 +32,8 @@ const caseWithoutCache = async () => {
     return stats;
 };
 
-const caseWithInstall = async () => {
-    console.log("case with install ...");
-    const option = {};
-    const stats = await PCR(option);
-    return stats;
-};
-
 const caseWithReinstall = async () => {
-    console.log("case with reinstall ...");
+    console.log(EC.magenta("async case with reinstall ..."));
     
     const cachePath = path.resolve(__dirname, "../.stats.json");
 
@@ -67,24 +61,22 @@ const caseWithReinstall = async () => {
 (async () => {
 
     let stats = await caseWithSync();
-    console.log(stats.executablePath);
-    console.log("===========================================================");
+    if (stats) {
+        console.log(EC.green(stats.executablePath));
+    }
+    console.log("================================================================================");
     
     stats = await caseWithCache();
-    console.log(stats.executablePath);
-    console.log("===========================================================");
+    console.log(EC.green(stats.executablePath));
+    console.log("================================================================================");
 
     stats = await caseWithoutCache();
-    console.log(stats.executablePath);
-    console.log("===========================================================");
-
-    stats = await caseWithInstall();
-    console.log(stats.executablePath);
-    console.log("===========================================================");
+    console.log(EC.green(stats.executablePath));
+    console.log("================================================================================");
 
     stats = await caseWithReinstall();
-    console.log(stats.executablePath);
-    console.log("===========================================================");
+    console.log(EC.green(stats.executablePath));
+    console.log("================================================================================");
 
     const browser = await stats.puppeteer.launch({
         headless: false,
@@ -93,8 +85,7 @@ const caseWithReinstall = async () => {
     }).catch(function(error) {
         console.log(error);
     });
-    const page = await browser.newPage();
-    await page.goto("https://www.npmjs.com/package/puppeteer-chromium-resolver");
+    await browser.newPage();
     await browser.close();
 
 })();

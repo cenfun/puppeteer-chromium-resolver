@@ -1,30 +1,11 @@
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
+const EC = require("eight-colors");
 const puppeteer = require("puppeteer-core");
 const PingMonitor = require("ping-monitor");
 const Gauge = require("gauge");
 const gauge = new Gauge();
-
-//=========================================================================================
-//https://en.wikipedia.org/wiki/ANSI_escape_code
-//color
-//0 - 7
-const Color = {
-    bg: {}
-};
-const addColor = (start, str, end) => {
-    return `\x1b[${start}m${str}\x1b[${end}m`;
-};
-const list = ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"];
-list.forEach((name, i) => {
-    Color[name] = (str) => {
-        return addColor(`3${i}`, str, "39");
-    };
-    Color.bg[name] = (str) => {
-        return addColor(`4${i}`, str, "49");
-    };
-});
 
 //=========================================================================================
 let outputSilent = false;
@@ -32,7 +13,7 @@ const output = (msg, isError) => {
     gauge.disable();
     if (!outputSilent) {
         if (isError) {
-            console.log(Color.red(`[PCR] ${msg}`));
+            console.log(EC.red(`[PCR] ${msg}`));
         } else {
             console.log(`[PCR] ${msg}`);
         }
@@ -390,7 +371,7 @@ const revisionHandler = (option) => {
     revisionInfo.executablePath = formatPath(revisionInfo.executablePath);
     let executablePath = revisionInfo.executablePath;
     if (executablePath) {
-        executablePath = fs.existsSync(executablePath) ? Color.green(executablePath) : Color.red(executablePath);
+        executablePath = fs.existsSync(executablePath) ? EC.green(executablePath) : EC.red(executablePath);
         output(`Chromium executablePath: ${executablePath}`);
     }
     
@@ -399,19 +380,19 @@ const revisionHandler = (option) => {
 
     revisionInfo.chromiumVersion = option.chromiumVersion;
     if (revisionInfo.chromiumVersion) {
-        output(`Chromium version: ${revisionInfo.chromiumVersion}`);
+        output(`Chromium version: ${EC.magenta(revisionInfo.chromiumVersion)}`);
     }
 
     if (typeof option.launchable === "boolean") {
         revisionInfo.launchable = option.launchable;
-        const launchable = revisionInfo.launchable ? Color.green("true") : Color.red("false");
+        const launchable = revisionInfo.launchable ? EC.green("true") : EC.red("false");
         output(`Chromium launchable: ${launchable}`);
     }
 
     //Puppeteer
     if (option.puppeteerConf) {
         revisionInfo.puppeteerVersion = option.puppeteerConf.version;
-        output(`Puppeteer version: ${revisionInfo.puppeteerVersion}`);
+        output(`Puppeteer version: ${EC.magenta(revisionInfo.puppeteerVersion)}`);
     }
     revisionInfo.puppeteer = puppeteer;
     
@@ -420,22 +401,26 @@ const revisionHandler = (option) => {
 
 //=========================================================================================
 
-const statsPath = path.resolve(__dirname, ".stats.json");
+const getStatsPath = () => {
+    const statsPath = path.resolve(__dirname, ".stats.json");
+    return statsPath;
+};
+
 const saveStats = (revisionInfo) => {
+    const statsPath = getStatsPath();
     const stats = Object.assign({}, revisionInfo);
     delete stats.puppeteer;
     fs.writeFileSync(statsPath, JSON.stringify(stats, null, 4));
     output(`Stats saved: ${path.relative(process.cwd(), statsPath)}`);
 };
 
-const getStats = (silent) => {
+const getStats = () => {
+    const statsPath = getStatsPath();
     let stats;
     try {
-        stats = require(statsPath);
+        stats = JSON.parse(fs.readFileSync(statsPath));
     } catch (e) {
-        if (!silent) {
-            output("Not found PCR stats cache, try npm install again.", true);
-        }
+        output("Not found PCR stats cache, try npm install again.", true);
     }
     if (stats) {
         stats.puppeteer = puppeteer;
@@ -448,18 +433,21 @@ const PCR = async (option = {}) => {
     option = getOption(option);
 
     //from stats cache
-    const stats = getStats(true);
+    outputSilent = true;
+    const stats = getStats();
     if (stats && fs.existsSync(stats.executablePath)) {
+        //if has custom revision should be matched
         if (!option.revision || (option.revision && option.revision === stats.revision)) {
             return stats;
         }
     }
 
+    //try to detection and install
     outputSilent = option.silent;
 
     option.puppeteerConf = initPuppeteerConf(option);
     option.revision = initRevision(option);
-    output(`Chromium revision: ${option.revision}`);
+    output(`Chromium revision: ${EC.magenta(option.revision)}`);
     option.userFolder = initUserFolder(option);
     //output("User folder: " + option.userFolder);
 
