@@ -367,23 +367,25 @@ const formatPath = (str) => {
 const revisionHandler = (option) => {
 
     const revisionInfo = option.revisionInfo;
-
+    //Chromium
     revisionInfo.executablePath = formatPath(revisionInfo.executablePath);
+    let executablePath = revisionInfo.executablePath;
+    executablePath = fs.existsSync(executablePath) ? Color.green(executablePath) : Color.red(executablePath);
+    output(`Chromium executablePath: ${executablePath}`);
+
     revisionInfo.folderPath = formatPath(revisionInfo.folderPath);
     revisionInfo.userFolder = formatPath(option.userFolder);
 
-    //Chromium
-    revisionInfo.launchable = option.launchable;
     revisionInfo.chromiumVersion = option.chromiumVersion;
-    let launchable = Color.red("false");
-    if (revisionInfo.launchable) {
-        launchable = Color.green("true");
-        output(`Chromium executablePath: ${revisionInfo.executablePath}`);
-        if (revisionInfo.chromiumVersion) {
-            output(`Chromium version: ${revisionInfo.chromiumVersion}`);
-        }
+    if (revisionInfo.chromiumVersion) {
+        output(`Chromium version: ${revisionInfo.chromiumVersion}`);
     }
-    output(`Chromium launchable: ${launchable}`);
+
+    if (typeof option.launchable === "boolean") {
+        revisionInfo.launchable = option.launchable;
+        const launchable = revisionInfo.launchable ? Color.green("true") : Color.red("false");
+        output(`Chromium launchable: ${launchable}`);
+    }
 
     //Puppeteer
     if (option.puppeteerConf) {
@@ -433,9 +435,8 @@ const PCR = async (option = {}) => {
     const localChromium = detectionLocalChromium(option);
     if (!localChromium) {
         await downloadHandler(option);
+        await launchHandler(option);
     }
-
-    await launchHandler(option);
 
     const revisionInfo = await revisionHandler(option);
     //console.log(revisionInfo);

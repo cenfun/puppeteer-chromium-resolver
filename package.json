@@ -19,7 +19,7 @@
   },
   "scripts": {
     "install": "node install.js",
-    "test": "node test/sync.js && node test/async.js"
+    "test": "node test/test.js"
   },
   "devDependencies": {
     "eslint": "^7.24.0"

@@ -19,7 +19,7 @@
 npm install puppeteer-chromium-resolver --save
 ```
 ## Usage
-### [Async Case](./test/async.js): dynamic detection and downloading chromium
+### [Async] dynamic detection and downloading chromium
 ```js
 (async () => {
     const PCR = require("puppeteer-chromium-resolver");
@@ -47,7 +47,7 @@ npm install puppeteer-chromium-resolver --save
 })();
 ```
 
-### [Sync Case](./test/sync.js): chromium will be pre-downloaded when PCR installation, so calling getStats() API will get PCR stats from previous installation cache.
+### [Sync] chromium will be pre-downloaded when PCR installation, so calling getStats() API will get PCR stats from previous installation cache.
 ```js
 (async () => {
     const PCR = require("puppeteer-chromium-resolver");
@@ -62,9 +62,7 @@ npm install puppeteer-chromium-resolver --save
     }).catch(function(error) {
         console.log(error);
     });
-    const page = await browser.newPage();
-    await page.goto("https://www.npmjs.com/package/puppeteer-chromium-resolver");
-    await browser.close();
+    ...
 })();
 ```
 
