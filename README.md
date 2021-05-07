@@ -72,7 +72,7 @@ if (stats) {
     "dependencies": {},
 
     "pcr": {
-        "revision": "818858"
+        "revision": "869685"
     }
 
 }
@@ -122,6 +122,9 @@ PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true
 
 ## CHANGELOG 
 > major version following puppeteer-core
+
++ v9.0.0
+  - updated puppeteer-core to ^9.1.1
 
 + v8.1.1
   - supported reading option from root package.json with "pcr" object

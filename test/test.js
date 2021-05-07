@@ -58,6 +58,14 @@ const caseWithReinstall = async () => {
     return stats;
 };
 
+const delay = function(ms) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve();
+        }, ms);
+    });
+};
+
 (async () => {
 
     let stats = await caseWithSync();
@@ -78,6 +86,8 @@ const caseWithReinstall = async () => {
     console.log(EC.green(stats.executablePath));
     console.log("================================================================================");
 
+    console.log(EC.magenta("launch browser and open page ..."));
+
     const browser = await stats.puppeteer.launch({
         headless: false,
         args: ["--no-sandbox"],
@@ -86,6 +96,11 @@ const caseWithReinstall = async () => {
         console.log(error);
     });
     await browser.newPage();
-    await browser.close();
+    await delay(1000);
+    await browser.close().catch(function(error) {
+        console.log(error);
+    });
+
+    console.log(EC.green("test done"));
 
 })();
