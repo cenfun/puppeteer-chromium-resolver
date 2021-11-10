@@ -4,7 +4,6 @@
 
 ![npm](https://img.shields.io/npm/v/puppeteer-chromium-resolver.svg)
 ![npm](https://img.shields.io/npm/dt/puppeteer-chromium-resolver.svg)
-![David](https://img.shields.io/david/cenfun/puppeteer-chromium-resolver.svg)
 
 * Tool to customize [puppeteer](https://github.com/GoogleChrome/puppeteer)
 * Detect local chromium automatically
