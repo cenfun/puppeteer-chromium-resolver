@@ -121,6 +121,8 @@ PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true
 
 ## CHANGELOG 
 > major version following puppeteer-core
++ v12.0.0
+  - updated puppeteer-core to ^12.0.1
 
 + v11.0.0
   - updated puppeteer-core to ^11.0.0
