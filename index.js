@@ -1,10 +1,10 @@
-const path = require("path");
-const fs = require("fs");
-const os = require("os");
-const EC = require("eight-colors");
-const puppeteer = require("puppeteer-core");
-const PingMonitor = require("ping-monitor");
-const Gauge = require("gauge");
+const path = require('path');
+const fs = require('fs');
+const os = require('os');
+const EC = require('eight-colors');
+const puppeteer = require('puppeteer-core');
+const PingMonitor = require('ping-monitor');
+const Gauge = require('gauge');
 const gauge = new Gauge();
 
 //=========================================================================================
@@ -56,13 +56,13 @@ const downloadNow = async (option, browserFetcher) => {
 
     let localRevisions = await browserFetcher.localRevisions();
     if (localRevisions && localRevisions.length) {
-        output("Checking previous local chromium revisions ...");
-        localRevisions = localRevisions.filter(revision => revision !== option.revision);
+        output('Checking previous local chromium revisions ...');
+        localRevisions = localRevisions.filter((revision) => revision !== option.revision);
         if (localRevisions.length > option.cacheRevisions) {
             localRevisions.sort();
             localRevisions.length -= option.cacheRevisions;
-            output(`Removing useless revisions ${localRevisions.join(", ")}`);
-            const cleanupOldVersions = localRevisions.map(revision => browserFetcher.remove(revision));
+            output(`Removing useless revisions ${localRevisions.join(', ')}`);
+            const cleanupOldVersions = localRevisions.map((revision) => browserFetcher.remove(revision));
             await Promise.all([... cleanupOldVersions]);
         }
     }
@@ -93,7 +93,7 @@ const downloadStart = async (option) => {
 
     if (option.retryTimes <= option.retry) {
         option.retryTimes += 1;
-        output("Retry Chromium downloading ... ");
+        output('Retry Chromium downloading ... ');
         return downloadStart(option);
     }
 
@@ -114,7 +114,7 @@ const pingHost = function(host, timeout = 5000) {
                 isUp: 0
             });
         }, timeout);
-        myMonitor.on("up", function(res, state) {
+        myMonitor.on('up', function(res, state) {
             clearTimeout(timeout_id);
             myMonitor.stop();
             resolve({
@@ -123,7 +123,7 @@ const pingHost = function(host, timeout = 5000) {
                 isUp: 1
             });
         });
-        myMonitor.on("down", function(res) {
+        myMonitor.on('down', function(res) {
             clearTimeout(timeout_id);
             myMonitor.stop();
             resolve({
@@ -132,7 +132,7 @@ const pingHost = function(host, timeout = 5000) {
                 isUp: 0
             });
         });
-        myMonitor.on("error", function(error) {
+        myMonitor.on('error', function(error) {
             clearTimeout(timeout_id);
             myMonitor.stop();
             resolve({
@@ -162,7 +162,7 @@ const sortHosts = async (hosts) => {
         return b.isUp - a.isUp;
     });
     //console.log(list);
-    hosts = list.map(item => item.host);
+    hosts = list.map((item) => item.host);
     return hosts;
 };
 
@@ -193,7 +193,7 @@ const getDetectionPath = (option) => {
     }
     detectionPath = `${detectionPath}`;
     if (detectionPath) {
-        return detectionPath.split(",");
+        return detectionPath.split(',');
     }
     return [];
 };
@@ -210,9 +210,9 @@ const initDetectionList = (option) => {
     let current = process.cwd();
     while (current && level < maxLevel) {
         detectionList.push(path.resolve(current, folderName));
-        const parent = path.resolve(current, "../");
+        const parent = path.resolve(current, '../');
         if (parent === current) {
-            current = "";
+            current = '';
         } else {
             current = parent;
         }
@@ -250,10 +250,10 @@ const detectionLocalChromium = (option) => {
     const revisionInfo = detectionHandler(option);
     if (revisionInfo) {
         option.revisionInfo = revisionInfo;
-        output("Detected local chromium is already downloaded");
+        output('Detected local chromium is already downloaded');
         return true;
     }
-    output("Not found local chromium");
+    output('Not found local chromium');
     return false;
 };
 
@@ -266,10 +266,10 @@ const initUserFolder = (option) => {
         return userFolder;
     }
     try {
-        fs.mkdirSync(userFolder, "0777");
+        fs.mkdirSync(userFolder, '0777');
         // Make double sure we have 0777 permissions; some operating systems
         // default umask does not allow write by default.
-        fs.chmodSync(userFolder, "0777");
+        fs.chmodSync(userFolder, '0777');
     } catch (e) {
         output(`User path is not writable: ${userFolder}`);
         output(e);
@@ -283,13 +283,15 @@ const initRevision = (option) => {
     }
     let revisions;
     try {
-        revisions = require("puppeteer-core/lib/cjs/puppeteer/revisions.js");
-    } catch (e) {}
+        revisions = require('puppeteer-core/lib/cjs/puppeteer/revisions.js');
+    } catch (e) {
+        // empty
+    }
     //console.log(revisions);
     if (revisions) {
         return revisions.PUPPETEER_REVISIONS.chromium;
     }
-    return "782078";
+    return '782078';
 };
 
 const initPuppeteerConf = (option) => {
@@ -298,16 +300,20 @@ const initPuppeteerConf = (option) => {
     }
     let config;
     try {
-        config = require("puppeteer-core/package.json");
-    } catch (e) {}
+        config = require('puppeteer-core/package.json');
+    } catch (e) {
+        // empty
+    }
     return config;
 };
 
 const getOptionFromPackage = () => {
     let config;
     try {
-        config = require(path.resolve("package.json"));
-    } catch (e) {}
+        config = require(path.resolve('package.json'));
+    } catch (e) {
+        // empty
+    }
     if (!config || !config.pcr) {
         return;
     }
@@ -317,10 +323,10 @@ const getOptionFromPackage = () => {
 
 const getOption = (option) => {
     const defaultOption = {
-        revision: "",
-        detectionPath: "",
-        folderName: ".chromium-browser-snapshots",
-        defaultHosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
+        revision: '',
+        detectionPath: '',
+        folderName: '.chromium-browser-snapshots',
+        defaultHosts: ['https://storage.googleapis.com', 'https://npm.taobao.org/mirrors'],
         hosts: [],
         cacheRevisions: 2,
         retry: 3,
@@ -340,7 +346,7 @@ const launchHandler = async (option) => {
     option.launchable = false;
     const browser = await puppeteer.launch({
         //fix root issue
-        args: ["--no-sandbox"],
+        args: ['--no-sandbox'],
         executablePath: option.revisionInfo.executablePath
     }).catch((error) => {
         //output(error, true);
@@ -359,7 +365,7 @@ const launchHandler = async (option) => {
 // \ to /
 const formatPath = (str) => {
     if (str) {
-        str = str.replace(/\\/g, "/");
+        str = str.replace(/\\/g, '/');
     }
     return str;
 };
@@ -374,7 +380,7 @@ const revisionHandler = (option) => {
         executablePath = fs.existsSync(executablePath) ? EC.green(executablePath) : EC.red(executablePath);
         output(`Chromium executablePath: ${executablePath}`);
     }
-    
+
     revisionInfo.folderPath = formatPath(revisionInfo.folderPath);
     revisionInfo.userFolder = formatPath(option.userFolder);
 
@@ -383,9 +389,9 @@ const revisionHandler = (option) => {
         output(`Chromium version: ${EC.magenta(revisionInfo.chromiumVersion)}`);
     }
 
-    if (typeof option.launchable === "boolean") {
+    if (typeof option.launchable === 'boolean') {
         revisionInfo.launchable = option.launchable;
-        const launchable = revisionInfo.launchable ? EC.green("true") : EC.red("false");
+        const launchable = revisionInfo.launchable ? EC.green('true') : EC.red('false');
         output(`Chromium launchable: ${launchable}`);
     }
 
@@ -395,20 +401,22 @@ const revisionHandler = (option) => {
         output(`Puppeteer version: ${EC.magenta(revisionInfo.puppeteerVersion)}`);
     }
     revisionInfo.puppeteer = puppeteer;
-    
+
     return revisionInfo;
 };
 
 //=========================================================================================
 
 const getStatsPath = () => {
-    const statsPath = path.resolve(__dirname, ".stats.json");
+    const statsPath = path.resolve(__dirname, '.stats.json');
     return statsPath;
 };
 
 const saveStats = (revisionInfo) => {
     const statsPath = getStatsPath();
-    const stats = Object.assign({}, revisionInfo);
+    const stats = {
+        ... revisionInfo
+    };
     delete stats.puppeteer;
     fs.writeFileSync(statsPath, JSON.stringify(stats, null, 4));
     output(`Stats saved: ${path.relative(process.cwd(), statsPath)}`);
@@ -420,7 +428,7 @@ const getStats = () => {
     try {
         stats = JSON.parse(fs.readFileSync(statsPath));
     } catch (e) {
-        output("Not found PCR stats cache, try npm install again.", true);
+        output('Not found PCR stats cache, try npm install again.', true);
     }
     if (stats) {
         stats.puppeteer = puppeteer;

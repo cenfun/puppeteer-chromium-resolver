@@ -1,30 +1,30 @@
-const fs = require("fs");
-const path = require("path");
-const EC = require("eight-colors");
-const puppeteer = require("puppeteer-core");
-const PCR = require(path.resolve(__dirname, "../index.js"));
+const fs = require('fs');
+const path = require('path');
+const EC = require('eight-colors');
+const puppeteer = require('puppeteer-core');
+const PCR = require(path.resolve(__dirname, '../index.js'));
 
 const caseWithSync = () => {
-    console.log(EC.magenta("sync case with cache ..."));
+    console.log(EC.magenta('sync case with cache ...'));
 
     const stats = PCR.getStats();
     return stats;
 };
 
 const caseWithCache = async () => {
-    console.log(EC.magenta("async case with cache ..."));
-    
+    console.log(EC.magenta('async case with cache ...'));
+
     const option = {};
     const stats = await PCR(option);
     return stats;
 };
 
 const caseWithoutCache = async () => {
-    console.log(EC.magenta("async case without cache ..."));
+    console.log(EC.magenta('async case without cache ...'));
     //remove cache
-    const cachePath = path.resolve(__dirname, "../.stats.json");
+    const cachePath = path.resolve(__dirname, '../.stats.json');
     if (fs.existsSync(cachePath)) {
-        console.log("remove stats cache ...");
+        console.log('remove stats cache ...');
         fs.rmSync(cachePath);
     }
     const option = {};
@@ -33,9 +33,9 @@ const caseWithoutCache = async () => {
 };
 
 const caseWithReinstall = async () => {
-    console.log(EC.magenta("async case with reinstall ..."));
-    
-    const cachePath = path.resolve(__dirname, "../.stats.json");
+    console.log(EC.magenta('async case with reinstall ...'));
+
+    const cachePath = path.resolve(__dirname, '../.stats.json');
 
     const json = require(cachePath);
     //remove chromium
@@ -49,7 +49,7 @@ const caseWithReinstall = async () => {
 
     //remove cache
     if (fs.existsSync(cachePath)) {
-        console.log("remove stats cache ...");
+        console.log('remove stats cache ...');
         fs.rmSync(cachePath);
     }
 
@@ -72,25 +72,25 @@ const delay = function(ms) {
     if (stats) {
         console.log(EC.green(stats.executablePath));
     }
-    console.log("================================================================================");
-    
+    console.log('================================================================================');
+
     stats = await caseWithCache();
     console.log(EC.green(stats.executablePath));
-    console.log("================================================================================");
+    console.log('================================================================================');
 
     stats = await caseWithoutCache();
     console.log(EC.green(stats.executablePath));
-    console.log("================================================================================");
+    console.log('================================================================================');
 
     stats = await caseWithReinstall();
     console.log(EC.green(stats.executablePath));
-    console.log("================================================================================");
+    console.log('================================================================================');
 
-    console.log(EC.magenta("launch browser and open page ..."));
+    console.log(EC.magenta('launch browser and open page ...'));
 
     const browser = await stats.puppeteer.launch({
         headless: false,
-        args: ["--no-sandbox"],
+        args: ['--no-sandbox'],
         executablePath: stats.executablePath
     }).catch(function(error) {
         console.log(error);
@@ -101,6 +101,6 @@ const delay = function(ms) {
         console.log(error);
     });
 
-    console.log(EC.green("test done"));
+    console.log(EC.green('test done'));
 
 })();
