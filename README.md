@@ -2,8 +2,9 @@
 # Puppeteer Chromium Resolver
 > Tool to resolve puppeteer and chromium faster, detect local installed chromium, download chromium with custom mirror host, cache chromium revision out of node_modules, test chromium headless being launchable.
 
-![npm](https://img.shields.io/npm/v/puppeteer-chromium-resolver.svg)
-![npm](https://img.shields.io/npm/dt/puppeteer-chromium-resolver.svg)
+![GitHub](https://img.shields.io/github/license/cenfun/puppeteer-chromium-resolver)
+![npm](https://img.shields.io/npm/v/puppeteer-chromium-resolver)
+![npm](https://img.shields.io/npm/dw/puppeteer-chromium-resolver)
 
 * Tool to customize [puppeteer](https://github.com/GoogleChrome/puppeteer)
 * Detect local chromium automatically
