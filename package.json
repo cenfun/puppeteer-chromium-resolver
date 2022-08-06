@@ -11,7 +11,7 @@
         "eight-colors": "^1.0.1",
         "gauge": "^4.0.4",
         "ping-monitor": "^0.6.2",
-        "puppeteer-core": "^15.1.1"
+        "puppeteer-core": "^16.0.0"
     },
     "repository": {
         "type": "git",
@@ -22,7 +22,7 @@
         "test": "node test/test.js"
     },
     "devDependencies": {
-        "eslint": "^8.18.0",
+        "eslint": "^8.21.0",
         "eslint-config-plus": "^1.0.3"
     }
 }
