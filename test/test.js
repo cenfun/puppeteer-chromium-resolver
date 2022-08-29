@@ -95,7 +95,8 @@ const delay = function(ms) {
     }).catch(function(error) {
         console.log(error);
     });
-    await browser.newPage();
+    const page = await browser.newPage();
+    await page.goto('https://www.npmjs.com/package/puppeteer-chromium-resolver');
     await delay(1000);
     await browser.close().catch(function(error) {
         console.log(error);
