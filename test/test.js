@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const EC = require('eight-colors');
 const puppeteer = require('puppeteer-core');
-const PCR = require(path.resolve(__dirname, '../index.js'));
+const PCR = require(path.resolve(__dirname, '../lib/index.js'));
 
 const caseWithSync = () => {
     console.log(EC.magenta('sync case with cache ...'));
