@@ -1,5 +1,8 @@
 > major version following puppeteer-core
 
++ v18.0.0
+  - updated puppeteer-core to ^18.0.5
+
 + v17.0.0
   - updated puppeteer-core to ^17.0.0
 
