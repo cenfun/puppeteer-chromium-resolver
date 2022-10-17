@@ -1,5 +1,9 @@
 > major version following puppeteer-core
 
++ v19.0.0
+  - updated puppeteer-core to ^19.0.0
+  - updated gauge to ^5.0.0
+
 + v18.0.0
   - updated puppeteer-core to ^18.0.5
 
