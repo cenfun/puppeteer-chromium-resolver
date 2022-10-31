@@ -21,7 +21,7 @@ const caseWithCache = async () => {
 const caseWithoutCache = async () => {
     console.log(EC.magenta('async case without cache ...'));
     //remove cache
-    const cachePath = path.resolve(__dirname, '../.stats.json');
+    const cachePath = PCR.getStatsPath();
     if (fs.existsSync(cachePath)) {
         console.log('remove stats cache ...');
         fs.rmSync(cachePath);
@@ -34,7 +34,7 @@ const caseWithoutCache = async () => {
 const caseWithReinstall = async () => {
     console.log(EC.magenta('async case with reinstall ...'));
 
-    const cachePath = path.resolve(__dirname, '../.stats.json');
+    const cachePath = PCR.getStatsPath();
 
     const json = require(cachePath);
     //remove chromium

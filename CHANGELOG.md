@@ -1,5 +1,8 @@
 > major version following puppeteer-core
 
++ v19.1.0
+  - moved .stats.json to [user home dir]/.pcr-stats.json
+
 + v19.0.0
   - updated puppeteer-core to ^19.0.0
   - updated gauge to ^5.0.0
