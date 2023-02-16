@@ -17,7 +17,6 @@
     "dependencies": {
         "eight-colors": "^1.0.2",
         "gauge": "^5.0.0",
-        "ping-monitor": "^0.7.0",
         "puppeteer-core": "^19.7.1"
     },
     "devDependencies": {
