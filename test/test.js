@@ -98,6 +98,14 @@ describe('puppeteer-chromium-resolver', function() {
         assert(stats.executablePath);
     });
 
+    it('async PCR with detectionPath: .temp', async () => {
+        const options = {
+            detectionPath: '.temp'
+        };
+        const stats = await PCR(options);
+        assert(stats.executablePath);
+    });
+
     it('launch browser and open page', async () => {
 
         const stats = await PCR();
