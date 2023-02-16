@@ -20,7 +20,7 @@ const caseWithCache = async () => {
 
 const caseWithoutCache = async () => {
     console.log(EC.magenta('async case without cache ...'));
-    //remove cache
+    // remove cache
     const cachePath = PCR.getStatsPath();
     if (fs.existsSync(cachePath)) {
         console.log('remove stats cache ...');
@@ -37,16 +37,16 @@ const caseWithReinstall = async () => {
     const cachePath = PCR.getStatsPath();
 
     const json = require(cachePath);
-    //remove chromium
+    // remove chromium
     if (fs.existsSync(json.folderPath)) {
         console.log(`remove chromium ${json.revision} ...`);
         const browserFetcher = PCR.createBrowserFetcher({
-            path: json.userFolder
+            path: json.snapshotsDir
         });
         await browserFetcher.remove(json.revision);
     }
 
-    //remove cache
+    // remove cache
     if (fs.existsSync(cachePath)) {
         console.log('remove stats cache ...');
         fs.rmSync(cachePath);

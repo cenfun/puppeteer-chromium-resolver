@@ -29,7 +29,6 @@ npm i puppeteer-chromium-resolver
         revision: "",
         detectionPath: "",
         folderName: ".chromium-browser-snapshots",
-        defaultHosts: ["https://storage.googleapis.com", "https://npm.taobao.org/mirrors"],
         hosts: [],
         cacheRevisions: 2,
         retry: 3,
