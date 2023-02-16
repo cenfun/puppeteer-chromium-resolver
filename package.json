@@ -5,7 +5,7 @@
     "main": "lib/index.js",
     "scripts": {
         "install": "node ./lib/install.js",
-        "test": "node test/test.js"
+        "test": "npx mocha"
     },
     "files": [
         "lib"
@@ -21,6 +21,8 @@
     },
     "devDependencies": {
         "eslint": "^8.34.0",
-        "eslint-config-plus": "^1.0.6"
+        "eslint-config-plus": "^1.0.6",
+        "mocha": "^10.2.0",
+        "rimraf": "^4.1.2"
     }
 }

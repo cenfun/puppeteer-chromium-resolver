@@ -1,110 +1,100 @@
 const fs = require('fs');
 const path = require('path');
 const EC = require('eight-colors');
+const rimraf = require('rimraf');
+const assert = require('assert');
+
 const PCR = require(path.resolve(__dirname, '../lib/index.js'));
 
-const caseWithSync = () => {
-    console.log(EC.magenta('sync case with cache ...'));
+describe('puppeteer-chromium-resolver', function() {
+    this.timeout(30 * 1000);
 
-    const stats = PCR.getStats();
-    return stats;
-};
+    it('reinstall with default options', async () => {
 
-const caseWithCache = async () => {
-    console.log(EC.magenta('async case with cache ...'));
+        const options = PCR.getOptions();
 
-    const option = {
-        revision: '1095419'
-    };
-    const stats = await PCR(option);
-    return stats;
-};
+        // remove all local chromium
+        const snapshotsDir = options.snapshotsDir;
+        if (fs.existsSync(snapshotsDir)) {
+            console.log(`remove chromium snapshots dir: ${EC.magenta(snapshotsDir)} ...`);
+            rimraf.nativeSync(snapshotsDir);
+        }
 
-const caseWithoutCache = async () => {
-    console.log(EC.magenta('async case without cache ...'));
-    // remove cache
-    const cachePath = PCR.getStatsPath();
-    if (fs.existsSync(cachePath)) {
-        console.log('remove stats cache ...');
-        fs.rmSync(cachePath);
-    }
-    const option = {};
-    const stats = await PCR(option);
-    return stats;
-};
+        // remove stats cache
+        const statsPath = path.resolve(options.cacheDir, options.statsName);
+        if (fs.existsSync(statsPath)) {
+            console.log(`remove stats cache: ${EC.magenta(statsPath)} ...`);
+            rimraf.nativeSync(statsPath);
+        }
 
-const caseWithReinstall = async () => {
-    console.log(EC.magenta('async case with reinstall ...'));
+        const option = {};
+        const stats = await PCR(option);
+        assert(stats.executablePath);
+    });
 
-    const cachePath = PCR.getStatsPath();
 
-    const json = require(cachePath);
-    // remove chromium
-    if (fs.existsSync(json.folderPath)) {
-        console.log(`remove chromium ${json.revision} ...`);
-        const browserFetcher = PCR.createBrowserFetcher({
-            path: json.snapshotsDir
+    it('async PCR with default options', async () => {
+        const options = {};
+        const stats = await PCR(options);
+        assert(stats.executablePath);
+    });
+
+    it('sync getStats', () => {
+        const stats = PCR.getStats();
+        assert(stats.executablePath);
+    });
+
+    it('async PCR without stats cache', async () => {
+        const options = PCR.getOptions();
+
+        const statsPath = path.resolve(options.cacheDir, options.statsName);
+        if (fs.existsSync(statsPath)) {
+            console.log(`remove stats cache: ${EC.magenta(statsPath)} ...`);
+            rimraf.nativeSync(statsPath);
+        }
+
+        const option = {};
+        const stats = await PCR(option);
+        assert(stats.executablePath);
+    });
+
+    it('async PCR with revision: 1095419', async () => {
+        const options = {
+            revision: '1095419'
+        };
+        const stats = await PCR(options);
+        assert(stats.executablePath);
+    });
+
+    it('sync getStats with revision: 1095419', () => {
+        const options = {
+            revision: '1095419'
+        };
+        const stats = PCR.getStats(options);
+        assert(stats.executablePath);
+    });
+
+    it('launch browser and open page', async () => {
+
+        const stats = await PCR();
+
+        const browser = await stats.puppeteer.launch({
+            headless: false,
+            args: ['--no-sandbox'],
+            executablePath: stats.executablePath
+        }).catch(function(err) {
+            console.error(err);
         });
-        await browserFetcher.remove(json.revision);
-    }
+        const page = await browser.newPage();
+        await page.goto('https://www.npmjs.com/package/puppeteer-chromium-resolver');
 
-    // remove cache
-    if (fs.existsSync(cachePath)) {
-        console.log('remove stats cache ...');
-        fs.rmSync(cachePath);
-    }
+        const title = await page.$eval('head title', (el) => el.innerText);
+        assert.equal(title, 'puppeteer-chromium-resolver - npm');
 
-    const option = {};
-    const stats = await PCR(option);
-    return stats;
-};
+        await browser.close().catch(function(err) {
+            console.error(err);
+        });
 
-const delay = function(ms) {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve();
-        }, ms);
-    });
-};
-
-const main = async () => {
-
-    let stats = await caseWithSync();
-    if (stats) {
-        console.log(EC.green(stats.executablePath));
-    }
-    console.log('================================================================================');
-
-    stats = await caseWithCache();
-    console.log(EC.green(stats.executablePath));
-    console.log('================================================================================');
-
-    stats = await caseWithoutCache();
-    console.log(EC.green(stats.executablePath));
-    console.log('================================================================================');
-
-    stats = await caseWithReinstall();
-    console.log(EC.green(stats.executablePath));
-    console.log('================================================================================');
-
-    console.log(EC.magenta('launch browser and open page ...'));
-
-    const browser = await stats.puppeteer.launch({
-        headless: false,
-        args: ['--no-sandbox'],
-        executablePath: stats.executablePath
-    }).catch(function(err) {
-        console.error(err);
-    });
-    const page = await browser.newPage();
-    await page.goto('https://www.npmjs.com/package/puppeteer-chromium-resolver');
-    await delay(1000);
-    await browser.close().catch(function(err) {
-        console.error(err);
     });
 
-    console.log(EC.green('test done'));
-
-};
-
-main();
+});
