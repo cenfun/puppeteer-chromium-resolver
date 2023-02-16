@@ -13,7 +13,9 @@ const caseWithSync = () => {
 const caseWithCache = async () => {
     console.log(EC.magenta('async case with cache ...'));
 
-    const option = {};
+    const option = {
+        revision: '1095419'
+    };
     const stats = await PCR(option);
     return stats;
 };
@@ -65,7 +67,7 @@ const delay = function(ms) {
     });
 };
 
-(async () => {
+const main = async () => {
 
     let stats = await caseWithSync();
     if (stats) {
@@ -91,16 +93,18 @@ const delay = function(ms) {
         headless: false,
         args: ['--no-sandbox'],
         executablePath: stats.executablePath
-    }).catch(function(error) {
-        console.log(error);
+    }).catch(function(err) {
+        console.error(err);
     });
     const page = await browser.newPage();
     await page.goto('https://www.npmjs.com/package/puppeteer-chromium-resolver');
     await delay(1000);
-    await browser.close().catch(function(error) {
-        console.log(error);
+    await browser.close().catch(function(err) {
+        console.error(err);
     });
 
     console.log(EC.green('test done'));
 
-})();
+};
+
+main();
