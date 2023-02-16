@@ -38,19 +38,19 @@ describe('puppeteer-chromium-resolver', function() {
 
         const options = {};
         const stats = await PCR(options);
-        assert(stats.executablePath);
+        assert(fs.existsSync(stats.executablePath));
     });
 
 
     it('async PCR with default options', async () => {
         const options = {};
         const stats = await PCR(options);
-        assert(stats.executablePath);
+        assert(fs.existsSync(stats.executablePath));
     });
 
     it('sync getStats', () => {
         const stats = PCR.getStats();
-        assert(stats.executablePath);
+        assert(fs.existsSync(stats.executablePath));
     });
 
     it('async PCR without stats cache', async () => {
@@ -59,7 +59,7 @@ describe('puppeteer-chromium-resolver', function() {
 
         const options = {};
         const stats = await PCR(options);
-        assert(stats.executablePath);
+        assert(fs.existsSync(stats.executablePath));
     });
 
     it('async PCR with revision: 1095419', async () => {
@@ -67,7 +67,7 @@ describe('puppeteer-chromium-resolver', function() {
             revision: '1095419'
         };
         const stats = await PCR(options);
-        assert(stats.executablePath);
+        assert(fs.existsSync(stats.executablePath));
     });
 
     it('sync getStats with revision: 1095419', () => {
@@ -75,7 +75,7 @@ describe('puppeteer-chromium-resolver', function() {
             revision: '1095419'
         };
         const stats = PCR.getStats(options);
-        assert(stats.executablePath);
+        assert(fs.existsSync(stats.executablePath));
     });
 
     it('async PCR with downloadPath: .temp', async () => {
@@ -87,7 +87,7 @@ describe('puppeteer-chromium-resolver', function() {
         cleanAll(mergedOptions);
 
         const stats = await PCR(options);
-        assert(stats.executablePath);
+        assert(fs.existsSync(stats.executablePath));
     });
 
     it('sync getStats with downloadPath: .temp', () => {
@@ -95,7 +95,7 @@ describe('puppeteer-chromium-resolver', function() {
             downloadPath: '.temp'
         };
         const stats = PCR.getStats(options);
-        assert(stats.executablePath);
+        assert(fs.existsSync(stats.executablePath));
     });
 
     it('async PCR with detectionPath: .temp', async () => {
@@ -103,7 +103,7 @@ describe('puppeteer-chromium-resolver', function() {
             detectionPath: '.temp'
         };
         const stats = await PCR(options);
-        assert(stats.executablePath);
+        assert(fs.existsSync(stats.executablePath));
     });
 
     it('launch browser and open page', async () => {

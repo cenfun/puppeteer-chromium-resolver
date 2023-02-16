@@ -11,7 +11,7 @@
 * Tool to customize [puppeteer](https://github.com/GoogleChrome/puppeteer)
 * Detect local chromium automatically
 * Download chromium from custom mirror host
-* Cache chromium to local folder
+* Cache chromium to custom local folder
 * Try launching chromium and resolve launchable and version
 * Resolve chromium executablePath and puppeteer
 
@@ -23,35 +23,26 @@ npm i puppeteer-chromium-resolver
 ## Usage
 ### [Async] dynamic detection and downloading chromium
 ```js
-(async () => {
-    const PCR = require("puppeteer-chromium-resolver");
-    const option = {
-        revision: "",
-        detectionPath: "",
-        folderName: ".chromium-browser-snapshots",
-        hosts: [],
-        cacheRevisions: 2,
-        retry: 3,
-        silent: false
-    };
-    const stats = await PCR(option);
-    const browser = await stats.puppeteer.launch({
-        headless: false,
-        args: ["--no-sandbox"],
-        executablePath: stats.executablePath
-    }).catch(function(error) {
-        console.log(error);
-    });
-    const page = await browser.newPage();
-    await page.goto("https://www.npmjs.com/package/puppeteer-chromium-resolver");
-    await browser.close();
-})();
+const PCR = require("puppeteer-chromium-resolver");
+const options = {};
+const stats = await PCR(options);
+const browser = await stats.puppeteer.launch({
+    headless: false,
+    args: ["--no-sandbox"],
+    executablePath: stats.executablePath
+}).catch(function(error) {
+    console.log(error);
+});
+const page = await browser.newPage();
+await page.goto("https://www.npmjs.com/package/puppeteer-chromium-resolver");
+await browser.close();
 ```
 
 ### [Sync] chromium will be pre-downloaded when PCR installation, so calling getStats() will get PCR stats from previous installation.
 ```js
 const PCR = require("puppeteer-chromium-resolver");
-const stats = PCR.getStats();
+const options = {};
+const stats = PCR.getStats(options);
 if (stats) {
     stats.puppeteer.launch({
         headless: false,
@@ -65,17 +56,44 @@ if (stats) {
 }
 ```
 
+## Default Options
+```js
+const options = {
+    // the chromium revision to use
+    // default is puppeteer.PUPPETEER_REVISIONS.chromium
+    revision: '',
+
+    // additional path to detect local chromium copy (separate with a comma if multiple paths)
+    detectionPath: '',
+
+    // custom path to download chromium to local, require dir permission: 0o777
+    // default is user home dir
+    downloadPath: '',
+
+    // the folder name for chromium snapshots (maybe there are multiple versions)
+    folderName: '.chromium-browser-snapshots',
+
+    // the stats file name, cache stats info for latest installation
+    statsName: '.pcr-stats.json',
+
+    // default hosts are ['https://storage.googleapis.com', 'https://npmmirror.com/mirrors']
+    hosts: [],
+
+    cacheRevisions: 2,
+    retry: 3,
+    silent: false
+};
+
+```
+see [lib/options.js](/lib/options.js)
+
 ### Option from root package.json with "pcr" object
 ```json
 {
-    "name": "",
-    "version": "",
-    "dependencies": {},
-
+    // ...
     "pcr": {
         "revision": "869685"
     }
-
 }
 ```
 
@@ -87,11 +105,14 @@ if (stats) {
 |folderPath      | String  |chromium folder path      |
 |local           | Boolean |exists local chromium     |
 |url             | String  |chromium download url     |
-|launchable      | Boolean |chromium launchable       |
 |chromiumVersion | String  |chromium version          |
+|launchable      | Boolean |chromium launchable       |
 |puppeteerVersion| String  |puppeteer version         |
 |puppeteer       | Object  |puppeteer module          |
 
+
+## Test Cases
+see [test/test.js](/test/test.js)
 
 ### How to make puppeteer work with puppeteer-chromium-resolver
 * 1, Stop the automatic download of Chromium with following settings in .npmrc 

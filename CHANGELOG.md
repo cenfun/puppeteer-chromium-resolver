@@ -1,5 +1,9 @@
 > major version following puppeteer-core
 
++ v19.2.0
+  - added new option downloadPath
+  - code refactoring
+
 + v19.1.0
   - moved .stats.json to [user home dir]/.pcr-stats.json
 
