@@ -171,5 +171,18 @@ yum update nss -y
 ```
 more [https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md](https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md)
 
+## Dependencies
+```sh
+nmls -p
+┌───────────────────────────────┬─────────┬─────────┬──────┬───────────┬────────┐
+│  Name                         │ Version │    Size │ Deps │ Deps Size │ Nested │
+├───────────────────────────────┼─────────┼─────────┼──────┼───────────┼────────┤
+│ └ puppeteer-chromium-resolver │ 19.2.0  │ 25.4 KB │   63 │   11.4 MB │      1 │
+│   └ dependencies              │         │         │      │           │        │
+│     ├ eight-colors            │ 1.0.2   │ 13.8 KB │    0 │       0 B │      0 │
+│     ├ gauge                   │ 5.0.0   │ 42.1 KB │   11 │  113.1 KB │      0 │
+│     └ puppeteer-core          │ 19.7.1  │ 3.82 MB │   49 │   7.45 MB │      1 │
+└───────────────────────────────┴─────────┴─────────┴──────┴───────────┴────────┘
+```
 ## CHANGELOG 
 [CHANGELOG.md](CHANGELOG.md)
