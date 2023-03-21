@@ -15,7 +15,7 @@
         "url": "https://github.com/cenfun/puppeteer-chromium-resolver.git"
     },
     "dependencies": {
-        "eight-colors": "^1.0.2",
+        "eight-colors": "^1.0.3",
         "gauge": "^5.0.0",
         "puppeteer-core": "^19.7.5"
     },

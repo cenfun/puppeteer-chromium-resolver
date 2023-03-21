@@ -29,7 +29,7 @@ const cleanAll = (options) => {
 };
 
 describe('puppeteer-chromium-resolver', function() {
-    this.timeout(30 * 1000);
+    this.timeout(5 * 60 * 1000);
 
     it('reinstall with default options', async () => {
 
