@@ -109,6 +109,7 @@ describe('puppeteer-chromium-resolver', function() {
     it('launch browser and open page', async () => {
 
         const stats = await PCR();
+        console.log('puppeteerVersion', stats.puppeteerVersion);
 
         const browser = await stats.puppeteer.launch({
             // headless: false,
@@ -119,8 +120,9 @@ describe('puppeteer-chromium-resolver', function() {
         });
         console.log('browser.newPage ...');
         const page = await browser.newPage();
-        console.log('page.goto ...');
-        await page.goto('https://www.npmjs.com/package/puppeteer-chromium-resolver');
+        const url = 'https://www.npmjs.com/package/puppeteer-chromium-resolver';
+        console.log(`page.goto ${url} ...`);
+        await page.goto(url);
 
         console.log('check head title ...');
         const title = await page.$eval('head title', (el) => el.innerText);

@@ -1,5 +1,8 @@
 > major version following puppeteer-core
 
++ v19.3.0
+  - updated ChromiumRevision to 1108766 from 1095492
+
 + v19.2.0
   - added new option downloadPath
   - code refactoring
