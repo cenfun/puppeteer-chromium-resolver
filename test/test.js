@@ -111,18 +111,22 @@ describe('puppeteer-chromium-resolver', function() {
         const stats = await PCR();
 
         const browser = await stats.puppeteer.launch({
-            headless: false,
+            // headless: false,
             args: ['--no-sandbox'],
             executablePath: stats.executablePath
         }).catch(function(err) {
             console.error(err);
         });
+        console.log('browser.newPage ...');
         const page = await browser.newPage();
+        console.log('page.goto ...');
         await page.goto('https://www.npmjs.com/package/puppeteer-chromium-resolver');
 
+        console.log('check head title ...');
         const title = await page.$eval('head title', (el) => el.innerText);
         assert.equal(title, 'puppeteer-chromium-resolver - npm');
 
+        console.log('browser.close ...');
         await browser.close().catch(function(err) {
             console.error(err);
         });
