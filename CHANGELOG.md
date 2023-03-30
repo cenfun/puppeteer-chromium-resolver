@@ -1,5 +1,8 @@
 > major version following puppeteer-core
 
++ v19.3.1
+  - fixed minor issue for docker build
+
 + v19.3.0
   - updated ChromiumRevision to 1108766 from 1095492
 
