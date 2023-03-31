@@ -115,20 +115,17 @@ see [lib/options.js](/lib/options.js)
 see [test/test.js](/test/test.js)
 
 ### How to make puppeteer work with puppeteer-chromium-resolver
-* 1, Stop the automatic download of Chromium with following settings in .npmrc 
+* 1, Sets env PUPPETEER_SKIP_DOWNLOAD to skip download Chromium when installation (.npmrc)
 ```
-puppeteer_skip_download = true
-PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true
+PUPPETEER_SKIP_DOWNLOAD=true
 ```
-(one more setting for puppeteer v2.x)
-
 * 2, Sets env PUPPETEER_EXECUTABLE_PATH to PCR executablePath globally or pass in launch option executablePath
 ```js
 (async () => {
 
     const PCR = require("puppeteer-chromium-resolver");
     const puppeteer = require("puppeteer");
-    const stats = await PCR();
+    const stats = await PCR({});
     //update global env
     process.env.PUPPETEER_EXECUTABLE_PATH = stats.executablePath;
 

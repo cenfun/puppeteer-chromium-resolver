@@ -6,7 +6,8 @@ RUN apt-get install -y ca-certificates fonts-liberation libasound2 libatk-bridge
 
 WORKDIR /workspace/my-project/
 
-# local test
+#ENV PUPPETEER_SKIP_DOWNLOAD=true
+
 #COPY package.json .
 #COPY lib ./lib/
 #COPY test ./test/
