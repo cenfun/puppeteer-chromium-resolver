@@ -1,5 +1,8 @@
 > major version following puppeteer-core
 
++ v19.3.2
+  - added env PUPPETEER_EXECUTABLE_PATH to skip download when installation
+
 + v19.3.1
   - fixed minor issue for docker build
 
