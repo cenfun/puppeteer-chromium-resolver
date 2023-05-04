@@ -102,7 +102,6 @@ see [lib/options.js](/lib/options.js)
 | :--------------| :------ | :----------------------  |
 |revision        | String  |current chromium revision |
 |executablePath  | String  |chromium executable path  |
-|folderPath      | String  |chromium folder path      |
 |local           | Boolean |exists local chromium     |
 |url             | String  |chromium download url     |
 |chromiumVersion | String  |chromium version          |

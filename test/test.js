@@ -112,6 +112,7 @@ describe('puppeteer-chromium-resolver', function() {
         console.log('puppeteerVersion', stats.puppeteerVersion);
 
         const browser = await stats.puppeteer.launch({
+            headless: 'new',
             // headless: false,
             args: ['--no-sandbox'],
             executablePath: stats.executablePath
