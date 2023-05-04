@@ -121,13 +121,12 @@ describe('puppeteer-chromium-resolver', function() {
         });
         console.log('browser.newPage ...');
         const page = await browser.newPage();
-        const url = 'https://www.npmjs.com/package/puppeteer-chromium-resolver';
-        console.log(`page.goto ${url} ...`);
-        await page.goto(url);
+        console.log('page.setContent ...');
+        await page.setContent('<html><head><title>puppeteer-chromium-resolver</title></head><body></body></html>');
 
         console.log('check head title ...');
         const title = await page.$eval('head title', (el) => el.innerText);
-        assert.equal(title, 'puppeteer-chromium-resolver - npm');
+        assert.equal(title, 'puppeteer-chromium-resolver');
 
         console.log('browser.close ...');
         await browser.close().catch(function(err) {
