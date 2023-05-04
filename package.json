@@ -20,7 +20,7 @@
         "@puppeteer/browsers": "^1.0.0",
         "eight-colors": "^1.0.3",
         "gauge": "^5.0.1",
-        "puppeteer-core": "^20.0.0"
+        "puppeteer-core": "^20.1.0"
     },
     "devDependencies": {
         "eslint": "^8.39.0",
