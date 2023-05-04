@@ -2,6 +2,8 @@
 
 + v20.0.0
   - updated puppeteer-core to ^20.0.0
+  - updated headless="new"
+  - replaced puppeteer.BrowserFetcher (Deprecated) with @puppeteer/browsers
 
 + v19.3.2
   - added env PUPPETEER_EXECUTABLE_PATH to skip download when installation

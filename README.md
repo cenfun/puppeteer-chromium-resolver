@@ -92,7 +92,7 @@ see [lib/options.js](/lib/options.js)
 {
     // ...
     "pcr": {
-        "revision": "869685"
+        "revision": "1138907"
     }
 }
 ```
@@ -102,8 +102,6 @@ see [lib/options.js](/lib/options.js)
 | :--------------| :------ | :----------------------  |
 |revision        | String  |current chromium revision |
 |executablePath  | String  |chromium executable path  |
-|local           | Boolean |exists local chromium     |
-|url             | String  |chromium download url     |
 |chromiumVersion | String  |chromium version          |
 |launchable      | Boolean |chromium launchable       |
 |puppeteerVersion| String  |puppeteer version         |
@@ -171,18 +169,5 @@ sudo apt-get install -y ca-certificates fonts-liberation libasound2 libatk-bridg
 ```
 more [https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md](https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md)
 
-## Dependencies
-```sh
-nmls -p
-┌───────────────────────────────┬─────────┬─────────┬──────┬───────────┬────────┐
-│  Name                         │ Version │    Size │ Deps │ Deps Size │ Nested │
-├───────────────────────────────┼─────────┼─────────┼──────┼───────────┼────────┤
-│ └ puppeteer-chromium-resolver │ 19.3.0  │ 27.4 KB │   56 │   12.6 MB │      0 │
-│   └ dependencies              │         │         │      │           │        │
-│     ├ eight-colors            │ 1.0.3   │ 14.9 KB │    0 │       0 B │      0 │
-│     ├ gauge                   │ 5.0.0   │ 42.1 KB │   11 │  113.1 KB │      0 │
-│     └ puppeteer-core          │ 19.8.0  │ 3.94 MB │   42 │   8.51 MB │      0 │
-└───────────────────────────────┴─────────┴─────────┴──────┴───────────┴────────┘
-```
 ## CHANGELOG 
 [CHANGELOG.md](CHANGELOG.md)
