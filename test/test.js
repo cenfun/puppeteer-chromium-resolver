@@ -62,17 +62,17 @@ describe('puppeteer-chromium-resolver', function() {
         assert(fs.existsSync(stats.executablePath));
     });
 
-    it('async PCR with revision: 1095419', async () => {
+    it('async PCR with revision: 1199997', async () => {
         const options = {
-            revision: '1095419'
+            revision: '1199997'
         };
         const stats = await PCR(options);
         assert(fs.existsSync(stats.executablePath));
     });
 
-    it('sync getStats with revision: 1095419', () => {
+    it('sync getStats with revision: 1199997', () => {
         const options = {
-            revision: '1095419'
+            revision: '1199997'
         };
         const stats = PCR.getStats(options);
         assert(fs.existsSync(stats.executablePath));
@@ -110,11 +110,12 @@ describe('puppeteer-chromium-resolver', function() {
 
         const stats = await PCR();
         console.log('puppeteerVersion', stats.puppeteerVersion);
+        console.log('executablePath', stats.executablePath);
 
         const browser = await stats.puppeteer.launch({
-            headless: 'new',
+            // headless: 'new',
             // headless: false,
-            args: ['--no-sandbox'],
+            // args: ['--no-sandbox'],
             executablePath: stats.executablePath
         }).catch(function(err) {
             console.error(err);

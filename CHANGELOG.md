@@ -1,5 +1,8 @@
 > major version following puppeteer-core
 
++ v21.0.0
+  - updated puppeteer-core to ^21.4.1
+
 + v20.0.0
   - updated puppeteer-core to ^20.0.0
   - updated headless="new"
