@@ -1,6 +1,6 @@
 {
     "name": "puppeteer-chromium-resolver",
-    "version": "21.0.0",
+    "version": "22.0.0",
     "description": "Tool to resolve puppeteer and chromium faster, detect local installed chromium, download chromium with custom mirror host, cache chromium revision out of node_modules, test chromium headless being launchable.",
     "main": "lib/index.js",
     "scripts": {
@@ -17,13 +17,13 @@
         "url": "https://github.com/cenfun/puppeteer-chromium-resolver.git"
     },
     "dependencies": {
-        "@puppeteer/browsers": "^1.8.0",
-        "eight-colors": "^1.0.3",
+        "@puppeteer/browsers": "^2.0.0",
+        "eight-colors": "^1.2.1",
         "gauge": "^5.0.1",
-        "puppeteer-core": "^21.4.1"
+        "puppeteer-core": "^22.0.0"
     },
     "devDependencies": {
-        "eslint": "^8.52.0",
+        "eslint": "^8.56.0",
         "eslint-config-plus": "^1.0.6",
         "mocha": "^10.2.0",
         "rimraf": "^5.0.5"

@@ -76,7 +76,7 @@ const options = {
     // the stats file name, cache stats info for latest installation
     statsName: '.pcr-stats.json',
 
-    // default hosts are ['https://storage.googleapis.com', 'https://npmmirror.com/mirrors']
+    // default hosts are ['https://storage.googleapis.com']
     hosts: [],
 
     cacheRevisions: 2,
