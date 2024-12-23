@@ -1,0 +1,28 @@
+name: Test
+
+on:
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js version
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: ''
+
+      - run: npm install
+      - run: npm run test
+        env:
+          FORCE_COLOR: true
