@@ -9,9 +9,17 @@ permissions:
 
 jobs:
 
-  build:
-    runs-on: ubuntu-latest
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
 
+    runs-on: ${{ matrix.os }}
+    name: Test on ${{ matrix.os }}
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
