@@ -1,5 +1,8 @@
 > major version following puppeteer-core
 
++ v24.0.0
+  - bump puppeteer-core@24.0.0 and @puppeteer/browsers@2.7.0
+
 + v23.0.0
   - updated puppeteer-core to ^23.1.0
 
