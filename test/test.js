@@ -115,7 +115,7 @@ describe('puppeteer-chromium-resolver', function() {
         const browser = await stats.puppeteer.launch({
             // headless: 'new',
             // headless: false,
-            // args: ['--no-sandbox'],
+            args: ['--no-sandbox'],
             executablePath: stats.executablePath
         }).catch(function(err) {
             console.error(err);
