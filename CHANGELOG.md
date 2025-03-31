@@ -1,5 +1,8 @@
 > major version following puppeteer-core
 
++ v24.0.1
+  - support PUPPETEER_REVISION and PUPPETEER_DEFAULT_HOST
+
 + v24.0.0
   - bump puppeteer-core@24.0.0 and @puppeteer/browsers@2.7.0
 
