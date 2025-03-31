@@ -61,6 +61,7 @@ if (stats) {
 const options = {
     // the chromium revision to use
     // default is puppeteer.PUPPETEER_REVISIONS.chromium
+    // or you can use PUPPETEER_REVISION environment variable
     revision: '',
 
     // additional path to detect local chromium copy (separate with a comma if multiple paths)
@@ -77,6 +78,7 @@ const options = {
     statsName: '.pcr-stats.json',
 
     // default hosts are ['https://storage.googleapis.com']
+    // or you can use PUPPETEER_DEFAULT_HOST environment variable
     hosts: [],
 
     cacheRevisions: 2,
