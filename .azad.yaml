@@ -1,0 +1,43 @@
+# Azad Agent Project Configuration
+# This file helps future AI agents understand the project setup.
+
+version: 1.0
+
+project_type: node_library
+
+language: typescript
+
+package_manager:
+  name: npm
+  # config_files: # Optional: if specific non-standard files are used
+  #   - package.json
+  #   - package-lock.json
+
+build_system:
+  tool: npm_scripts # or tsc directly if preferred
+  build_command: 'npm run build'
+  output_dir: 'dist' # Main directory for compiled JavaScript
+
+source_code:
+  main_directory: 'src'
+  # entry_point: "src/index.ts" # If there's a single primary entry
+
+testing:
+  framework: mocha
+  command: 'npm test'
+  # config_files: # Optional
+  #   - test/mocha.opts (if exists)
+  test_directory: 'test'
+  typescript_runner: ts-node # ts-node is used via --require in test script
+
+# Key files and directories for understanding the project:
+important_files:
+  - package.json
+  - tsconfig.json
+  - src/index.ts
+  - README.md
+# Notes for future agents:
+# - This project was converted from JavaScript to TypeScript.
+# - The `dist` directory contains the compiled JavaScript and declaration files.
+# - The `src` directory contains the TypeScript source code.
+# - Tests are written in TypeScript and run using ts-node.
