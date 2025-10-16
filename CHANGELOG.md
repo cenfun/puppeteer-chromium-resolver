@@ -1,5 +1,8 @@
 > major version following puppeteer-core
 
++ v24.0.2
+  - replaced deprecated gauge library with cli-progress
+
 + v24.0.1
   - support PUPPETEER_REVISION and PUPPETEER_DEFAULT_HOST
 
