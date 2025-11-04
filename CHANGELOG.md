@@ -1,5 +1,8 @@
 > major version following puppeteer-core
 
++ v24.0.3
+  - added linux_arm
+
 + v24.0.2
   - replaced deprecated gauge library with cli-progress
 
