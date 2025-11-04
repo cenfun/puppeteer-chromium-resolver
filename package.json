@@ -17,15 +17,15 @@
         "url": "https://github.com/cenfun/puppeteer-chromium-resolver.git"
     },
     "dependencies": {
-        "@puppeteer/browsers": "^2.10.12",
+        "@puppeteer/browsers": "^2.10.13",
         "cli-progress": "^3.12.0",
         "eight-colors": "^1.3.1",
-        "puppeteer-core": "^24.25.0"
+        "puppeteer-core": "^24.28.0"
     },
     "devDependencies": {
-        "eslint": "^9.37.0",
+        "eslint": "^9.39.1",
         "eslint-config-plus": "^2.0.3",
         "mocha": "^11.7.4",
-        "rimraf": "^6.0.1"
+        "rimraf": "^6.1.0"
     }
 }
