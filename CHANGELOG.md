@@ -1,5 +1,8 @@
 > major version following puppeteer-core
 
++ v25.0.0
+  - updated puppeteer-core to ^25.5.0 and @puppeteer/browsers to ^3.1.0
+
 + v24.0.3
   - added linux_arm
 
